@@ -1,0 +1,25 @@
+{
+  "name": "misrosoft-vs-code",
+  "displayName": "Misrosoft VS Code Guardian",
+  "description": "在 VS Code 里运行的代码文件守护小游戏。",
+  "version": "0.1.0",
+  "publisher": "nothingyuancando",
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:misrosoftVsCode.startGuardian"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "misrosoftVsCode.startGuardian",
+        "title": "微软大战代码：守护你的代码文件"
+      }
+    ]
+  }
+}

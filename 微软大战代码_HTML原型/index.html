@@ -159,6 +159,74 @@
       font-family: Consolas, monospace;
     }
 
+    .workspace-files {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 10px 8px;
+      background: #222223;
+    }
+
+    .workspace-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      color: #cccccc;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .workspace-title strong {
+      color: var(--green);
+      font-family: Consolas, monospace;
+      font-weight: 600;
+    }
+
+    .file-tree {
+      display: grid;
+      gap: 3px;
+      font-family: Consolas, "Microsoft YaHei", monospace;
+      font-size: 12px;
+    }
+
+    .file-row {
+      display: grid;
+      grid-template-columns: 18px 1fr auto;
+      align-items: center;
+      gap: 6px;
+      min-height: 24px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #d4d4d4;
+    }
+
+    .file-row.active {
+      background: rgba(0, 122, 204, .18);
+    }
+
+    .file-row.deleted {
+      color: #fca5a5;
+      background: rgba(241, 76, 76, .12);
+      text-decoration: line-through;
+    }
+
+    .file-icon {
+      color: #9cdcfe;
+    }
+
+    .file-row.deleted .file-icon {
+      color: var(--red);
+    }
+
+    .file-status {
+      color: var(--green);
+      font-size: 11px;
+      text-decoration: none;
+    }
+
+    .file-row.deleted .file-status {
+      color: #fca5a5;
+    }
+
     .deck {
       padding: 10px;
       overflow: auto;
@@ -331,8 +399,9 @@
       overflow: auto;
       background:
         linear-gradient(90deg, rgba(0, 122, 204, .08), transparent 44%),
-        radial-gradient(circle at 78% 12%, rgba(241, 76, 76, .13), transparent 25%),
+        linear-gradient(0deg, rgba(255, 255, 255, .025) 1px, transparent 1px),
         #1e1e1e;
+      background-size: auto, 100% 24px, auto;
     }
 
     .row-labels {
@@ -354,6 +423,11 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .row-label.deleted {
+      color: #fca5a5;
+      text-decoration: line-through;
     }
 
     .board-wrap {
@@ -398,6 +472,11 @@
     .cell.enemy-zone {
       background: rgba(70, 34, 34, .45);
       border-style: dashed;
+    }
+
+    .cell.file-lost {
+      border-color: rgba(241, 76, 76, .7);
+      background: rgba(92, 26, 26, .42);
     }
 
     .plant {
@@ -614,6 +693,41 @@
       color: #fff;
     }
 
+    .protected-list {
+      display: grid;
+      gap: 6px;
+      font-family: Consolas, "Microsoft YaHei", monospace;
+      font-size: 12px;
+    }
+
+    .protected-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      color: #cccccc;
+      min-width: 0;
+    }
+
+    .protected-item span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .protected-item.deleted {
+      color: #fca5a5;
+      text-decoration: line-through;
+    }
+
+    .protected-item strong {
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    .protected-item.deleted strong {
+      color: #fca5a5;
+    }
+
     .wave-list {
       display: grid;
       gap: 6px;
@@ -711,6 +825,84 @@
       z-index: 20;
       pointer-events: none;
     }
+
+    .incident-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, .45);
+      z-index: 40;
+    }
+
+    .incident-overlay.show {
+      display: grid;
+    }
+
+    .incident-dialog {
+      width: min(560px, calc(100vw - 48px));
+      border: 1px solid #454545;
+      border-radius: 8px;
+      background: #252526;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .55);
+      color: #d4d4d4;
+      overflow: hidden;
+    }
+
+    .incident-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      padding: 0 14px;
+      background: #3c3c3c;
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .incident-body {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .incident-body h2 {
+      margin: 0;
+      color: #fca5a5;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .incident-body p {
+      margin: 0;
+      color: #cccccc;
+    }
+
+    .fake-delete-list {
+      margin: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #1e1e1e;
+      font-family: Consolas, "Microsoft YaHei", monospace;
+      color: #fca5a5;
+      list-style: none;
+    }
+
+    .fake-delete-list li + li {
+      margin-top: 4px;
+    }
+
+    .incident-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 18px 16px;
+      border-top: 1px solid var(--line);
+    }
   </style>
 </head>
 <body>
@@ -743,6 +935,13 @@
           <strong id="memoryValue">70</strong>
         </div>
       </div>
+      <div class="workspace-files">
+        <div class="workspace-title">
+          <span>Misrosoft-VS-code</span>
+          <strong id="guardValue">7/7</strong>
+        </div>
+        <div class="file-tree" id="fileTree"></div>
+      </div>
       <div class="deck">
         <div class="deck-title">plants/</div>
         <div id="plantCards" class="card-grid"></div>
@@ -753,14 +952,14 @@
 
     <main class="editor">
       <div class="tabs">
-        <div class="tab">main.ts</div>
-        <div class="tab active">defense.js</div>
-        <div class="tab">final_project.zip</div>
+        <div class="tab">src/main.ts</div>
+        <div class="tab active">src/defense.ts</div>
+        <div class="tab">毕业设计-最终版.zip</div>
       </div>
 
       <div class="status-row">
         <div class="pill">wave <strong id="waveValue">0</strong>/5</div>
-        <div class="pill">main branch <strong id="livesValue">3</strong></div>
+        <div class="pill">files safe <strong id="livesValue">7</strong></div>
         <div class="pill">selected <strong id="selectedValue">none</strong></div>
         <div class="pill">status <strong id="stateValue">ready</strong></div>
         <div class="run-controls">
@@ -794,6 +993,10 @@
           <div class="mini-stat"><span>更新进度</span><strong id="updateValue">0%</strong></div>
         </div>
         <div class="wave-box">
+          <h3>守护文件</h3>
+          <div class="protected-list" id="protectedList"></div>
+        </div>
+        <div class="wave-box">
           <h3>组合缓存</h3>
           <div class="mini-stat"><span>print + for</span><strong>连发</strong></div>
           <div class="mini-stat"><span>if + else</span><strong>反击</strong></div>
@@ -816,7 +1019,27 @@
   <div class="statusbar">
     <span>branch: main</span>
     <span>encoding: UTF-8</span>
-    <span>mode: tower-defense</span>
+    <span>mode: workspace-guardian</span>
+    <span id="safetyStatus">no real files will be deleted</span>
+  </div>
+
+  <div class="incident-overlay" id="incidentModal" role="dialog" aria-modal="true" aria-labelledby="incidentTitle">
+    <div class="incident-dialog">
+      <div class="incident-title">
+        <span>Visual Studio Code</span>
+        <span class="spacer"></span>
+        <span class="window-dot"></span>
+      </div>
+      <div class="incident-body">
+        <h2 id="incidentTitle">你的代码文件被删掉了</h2>
+        <p>这是游戏里的模拟事故。真实磁盘文件没有被删除，也不会被修改。</p>
+        <ul class="fake-delete-list" id="fakeDeleteList"></ul>
+        <p>重开会把 Explorer 里的文件状态恢复成正常。</p>
+      </div>
+      <div class="incident-actions">
+        <button id="modalResetBtn" class="control-btn primary">恢复工作区</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -827,15 +1050,16 @@
     const CELL_W = 66;
     const CELL_H = 54;
     const GAP = 6;
-    const rowNames = [
-      "browser.process",
-      "editor.process",
-      "terminal.process",
-      "database.process",
-      "debug.process",
-      "build.process",
-      "slackoff.process"
+    const protectedFiles = [
+      { path: "src/main.ts", short: "main.ts", icon: "TS" },
+      { path: "src/defense.ts", short: "defense.ts", icon: "TS" },
+      { path: "src/waves.json", short: "waves.json", icon: "{}" },
+      { path: "assets/plants.svg", short: "plants.svg", icon: "SVG" },
+      { path: "README.md", short: "README.md", icon: "MD" },
+      { path: "package.json", short: "package.json", icon: "{}" },
+      { path: "毕业设计-最终版.zip", short: "最终版.zip", icon: "ZIP" }
     ];
+    const rowNames = protectedFiles.map(file => file.short);
 
     const plantDefs = {
       coffee: {
@@ -1034,7 +1258,7 @@
     const state = {
       coffee: 175,
       memory: 70,
-      lives: 3,
+      lives: ROWS,
       wave: 0,
       running: false,
       paused: false,
@@ -1050,7 +1274,8 @@
       bulletId: 1,
       updateProgress: 0,
       waveActive: false,
-      gameOver: false
+      gameOver: false,
+      files: protectedFiles.map(file => ({ ...file, deleted: false, hits: 0, lastEnemy: "" }))
     };
 
     const board = document.getElementById("board");
@@ -1059,6 +1284,10 @@
     const plantCards = document.getElementById("plantCards");
     const moduleCards = document.getElementById("moduleCards");
     const logEl = document.getElementById("log");
+    const fileTree = document.getElementById("fileTree");
+    const protectedList = document.getElementById("protectedList");
+    const incidentModal = document.getElementById("incidentModal");
+    const fakeDeleteList = document.getElementById("fakeDeleteList");
 
     function cellX(col) {
       return col * (CELL_W + GAP) + CELL_W / 2;
@@ -1116,9 +1345,10 @@
 
     function createBoard() {
       rowLabels.innerHTML = "";
-      rowNames.forEach((name) => {
+      rowNames.forEach((name, index) => {
         const label = document.createElement("div");
         label.className = "row-label";
+        label.dataset.row = index;
         label.textContent = name;
         rowLabels.appendChild(label);
       });
@@ -1221,7 +1451,7 @@
     function resetGame() {
       state.coffee = 175;
       state.memory = 70;
-      state.lives = 3;
+      state.lives = ROWS;
       state.wave = 0;
       state.running = false;
       state.paused = false;
@@ -1238,9 +1468,11 @@
       state.updateProgress = 0;
       state.waveActive = false;
       state.gameOver = false;
+      state.files = protectedFiles.map(file => ({ ...file, deleted: false, hits: 0, lastEnemy: "" }));
       logEl.innerHTML = "";
-      addLog("工作区已重新打开。");
-      addLog("main.ts、defense.js、final_project.zip 等待防守。");
+      incidentModal.classList.remove("show");
+      addLog("VS Code 工作区已重新打开。");
+      addLog("请在编辑器战场中守护这些文件，敌人突破只会触发界面里的假删除。");
       renderPlants();
       renderActors();
       updateUI();
@@ -1276,7 +1508,7 @@
         stoppedUntil: 0,
         copy
       });
-      addLog(`${copy ? "冲突副本" : def.name} 出现在 ${rowNames[row]}。`);
+      addLog(`${copy ? "冲突副本" : def.name} 正在尝试删除 ${state.files[row].path}。`);
     }
 
     function tick(time) {
@@ -1431,11 +1663,32 @@
 
         if (enemy.col < -0.45) {
           state.enemies = state.enemies.filter(item => item.id !== enemy.id);
-          state.lives -= 1;
-          addLog(`${def.name} 攻破了 ${rowNames[enemy.row]}。main 分支损失 1 点。`, "bad");
-          if (state.lives <= 0) loseGame();
+          markFileDeleted(enemy.row, def.name);
+          if (remainingFiles() <= 0) loseGame();
         }
       }
+    }
+
+    function markFileDeleted(row, enemyName) {
+      const file = state.files[row];
+      file.hits += 1;
+      file.lastEnemy = enemyName;
+      if (!file.deleted) {
+        file.deleted = true;
+        addEffect(row, 0, "blast");
+        addLog(`${enemyName} 突破防线：rm -rf ${file.path}`, "bad");
+        addLog(`${file.path} 在 Explorer 中被标记为 deleted。真实文件没有被删除。`, "warn");
+      } else {
+        addLog(`${enemyName} 又检查了一遍 ${file.path}，发现它已经在假删除列表里。`, "bad");
+      }
+      state.lives = remainingFiles();
+      if (state.lives <= Math.ceil(ROWS / 2) && !state.gameOver) {
+        addLog("守护文件数量过半告急，建议补墙、补 rollback、给关键植物挂 try-catch。", "warn");
+      }
+    }
+
+    function remainingFiles() {
+      return state.files.filter(file => !file.deleted).length;
     }
 
     function useEnemySkill(enemy, time) {
@@ -1603,7 +1856,7 @@
     function winGame() {
       state.running = false;
       state.gameOver = true;
-      addLog("编译成功。main 分支幸存。", "good");
+      addLog("编译成功。工作区文件幸存。", "good");
       addLog("你获得了 3 杯冷掉的咖啡。", "good");
       updateUI();
     }
@@ -1611,8 +1864,18 @@
     function loseGame() {
       state.running = false;
       state.gameOver = true;
-      addLog("项目已被覆盖。最后提交记录：未保存修改。", "bad");
+      addLog("Explorer 显示：你的代码文件被删掉了。", "bad");
+      addLog("安全提示：这只是游戏状态，真实项目文件没有被删除。", "warn");
+      showIncidentModal();
       updateUI();
+    }
+
+    function showIncidentModal() {
+      const deleted = state.files.filter(file => file.deleted);
+      fakeDeleteList.innerHTML = deleted.map(file => (
+        `<li>deleted: ${file.path}${file.lastEnemy ? `  // by ${file.lastEnemy}` : ""}</li>`
+      )).join("") || "<li>deleted: workspace/*</li>";
+      incidentModal.classList.add("show");
     }
 
     function renderPlants() {
@@ -1677,12 +1940,16 @@
       document.getElementById("memoryValue").textContent = Math.floor(state.memory);
       document.getElementById("waveValue").textContent = state.wave;
       document.getElementById("livesValue").textContent = state.lives;
+      document.getElementById("guardValue").textContent = `${remainingFiles()}/${ROWS}`;
       document.getElementById("selectedValue").textContent = state.selected ? selectedName() : "none";
       document.getElementById("stateValue").textContent = state.gameOver ? "done" : state.paused ? "paused" : state.running ? "running" : "ready";
       document.getElementById("plantCount").textContent = countPlants();
       document.getElementById("enemyCount").textContent = state.enemies.length;
       document.getElementById("bulletCount").textContent = state.bullets.length;
       document.getElementById("updateValue").textContent = `${state.updateProgress}%`;
+      document.getElementById("safetyStatus").textContent = state.gameOver
+        ? "simulation only: real files are safe"
+        : "guarding workspace files";
 
       document.querySelectorAll(".card").forEach(card => {
         const key = card.dataset.key;
@@ -1691,6 +1958,33 @@
         card.classList.toggle("disabled", !canPay(def));
       });
       updateNextWave();
+      renderFileStatus();
+    }
+
+    function renderFileStatus() {
+      fileTree.innerHTML = state.files.map((file, index) => `
+        <div class="file-row ${index === 1 ? "active" : ""} ${file.deleted ? "deleted" : ""}">
+          <span class="file-icon">${file.icon}</span>
+          <span title="${file.path}">${file.path}</span>
+          <span class="file-status">${file.deleted ? "deleted" : "safe"}</span>
+        </div>
+      `).join("");
+
+      protectedList.innerHTML = state.files.map(file => `
+        <div class="protected-item ${file.deleted ? "deleted" : ""}">
+          <span title="${file.path}">${file.path}</span>
+          <strong>${file.deleted ? "lost" : "safe"}</strong>
+        </div>
+      `).join("");
+
+      document.querySelectorAll(".row-label").forEach(label => {
+        const row = Number(label.dataset.row);
+        label.classList.toggle("deleted", Boolean(state.files[row]?.deleted));
+      });
+      document.querySelectorAll(".cell").forEach(cell => {
+        const row = Number(cell.dataset.row);
+        cell.classList.toggle("file-lost", Boolean(state.files[row]?.deleted));
+      });
     }
 
     function selectedName() {
@@ -1726,6 +2020,7 @@
     document.getElementById("startBtn").addEventListener("click", startGame);
     document.getElementById("pauseBtn").addEventListener("click", togglePause);
     document.getElementById("resetBtn").addEventListener("click", resetGame);
+    document.getElementById("modalResetBtn").addEventListener("click", resetGame);
 
     createCards();
     createBoard();

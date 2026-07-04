@@ -3,7 +3,8 @@
 Thumbs.db
 desktop.ini
 .idea/
-.vscode/
+.vscode/*
+!.vscode/launch.json
 
 # Logs
 *.log
