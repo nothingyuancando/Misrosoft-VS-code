@@ -26,7 +26,12 @@ function send(res, status, body, type = "text/plain; charset=utf-8") {
 
 function safePath(requestPath) {
   const decoded = decodeURIComponent(requestPath);
-  const cleanPath = decoded === "/" ? "/微软大战代码_HTML原型/index.html" : decoded;
+  const rootAssets = new Set(["/styles.css", "/game.js"]);
+  const cleanPath = decoded === "/"
+    ? "/微软大战代码_HTML原型/index.html"
+    : rootAssets.has(decoded)
+      ? `/微软大战代码_HTML原型${decoded}`
+      : decoded;
   const filePath = path.normalize(path.join(root, cleanPath));
   if (!filePath.startsWith(root)) return null;
   return filePath;

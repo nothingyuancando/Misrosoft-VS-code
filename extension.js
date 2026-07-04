@@ -33,12 +33,20 @@ function activate(context) {
 
 function getWebviewHtml(context, webview) {
   const htmlPath = path.join(context.extensionPath, "微软大战代码_HTML原型", "index.html");
+  const stylesUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(context.extensionUri, "微软大战代码_HTML原型", "styles.css")
+  ).toString();
+  const scriptUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(context.extensionUri, "微软大战代码_HTML原型", "game.js")
+  ).toString();
   const assetsRoot = webview.asWebviewUri(
     vscode.Uri.joinPath(context.extensionUri, "微软大战代码_素材库", "图片资源")
   ).toString();
 
   return fs
     .readFileSync(htmlPath, "utf8")
+    .replaceAll('href="styles.css"', `href="${stylesUri}"`)
+    .replaceAll('src="game.js"', `src="${scriptUri}"`)
     .replaceAll("../微软大战代码_素材库/图片资源/", `${assetsRoot}/`);
 }
 
