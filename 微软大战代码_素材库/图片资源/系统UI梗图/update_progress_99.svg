@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#0078d7"/>
+  <text x="320" y="128" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="32" fill="#fff">Completing updates</text>
+  <text x="320" y="184" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="56" fill="#fff">99%</text>
+  <text x="320" y="236" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" fill="#fff">This may take a while</text>
+</svg>

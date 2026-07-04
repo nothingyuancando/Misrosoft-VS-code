@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <circle cx="128" cy="128" r="104" fill="#e0f2fe" stroke="#111827" stroke-width="8"/>
+  <path d="M213 130c0 49-39 82-87 82-43 0-78-29-78-66 0-30 25-49 55-49 28 0 49 17 49 39 0 19-16 33-38 33-17 0-31-8-38-20 8 29 34 49 66 49 43 0 78-31 78-76 0-32-20-60-49-73 25 8 42 28 42 81z" fill="#00a4ef"/>
+  <path d="M45 141c0-54 43-97 96-97 35 0 66 18 83 46-29-15-66-8-91 18-20 20-28 47-20 71-39 1-68-14-68-38z" fill="#2bc7b4"/>
+  <text x="128" y="229" text-anchor="middle" font-family="Consolas, monospace" font-size="20" fill="#111827">default?</text>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect x="16" y="32" width="224" height="192" rx="16" fill="#0078d7" stroke="#111827" stroke-width="8"/>
+  <text x="60" y="86" font-family="Segoe UI, Arial, sans-serif" font-size="42" fill="#fff">:(</text>
+  <text x="42" y="130" font-family="Consolas, monospace" font-size="18" fill="#fff">MEMORY</text>
+  <text x="42" y="156" font-family="Consolas, monospace" font-size="18" fill="#fff">MANAGEMENT</text>
+  <rect x="42" y="181" width="94" height="14" fill="#fff" opacity=".8"/>
+  <rect x="42" y="202" width="151" height="10" fill="#fff" opacity=".65"/>
+</svg>

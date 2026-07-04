@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect x="42" y="70" width="172" height="120" rx="20" fill="#f8fafc" stroke="#111827" stroke-width="8"/>
+  <path d="M155 88l-52 40 52 40v-27h42v-26h-42z" fill="#f97316" stroke="#111827" stroke-width="6" stroke-linejoin="round"/>
+  <text x="128" y="214" text-anchor="middle" font-family="Consolas, monospace" font-size="24" fill="#111827">rollback</text>
+</svg>

@@ -1,0 +1,25 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependencies and build output for future prototypes
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+coverage/
+
+# Python static-server cache
+__pycache__/
+*.py[cod]

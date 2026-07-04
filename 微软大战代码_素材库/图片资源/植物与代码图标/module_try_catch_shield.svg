@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <path d="M128 28l82 34v62c0 52-33 87-82 106-49-19-82-54-82-106V62z" fill="#dcfce7" stroke="#111827" stroke-width="8" stroke-linejoin="round"/>
+  <text x="128" y="118" text-anchor="middle" font-family="Consolas, monospace" font-size="31" font-weight="700" fill="#166534">try</text>
+  <text x="128" y="158" text-anchor="middle" font-family="Consolas, monospace" font-size="26" fill="#166534">catch</text>
+</svg>

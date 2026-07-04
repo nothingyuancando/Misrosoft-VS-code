@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect x="56" y="62" width="126" height="132" rx="18" fill="#6b4f3f" stroke="#111827" stroke-width="8"/>
+  <rect x="78" y="82" width="82" height="42" rx="10" fill="#111827"/>
+  <text x="119" y="110" text-anchor="middle" font-family="Consolas, monospace" font-size="22" fill="#89d185">coffee</text>
+  <path d="M182 100h21c20 0 29 16 21 34-8 18-25 29-42 27" fill="none" stroke="#111827" stroke-width="8" stroke-linecap="round"/>
+  <rect x="80" y="194" width="105" height="28" rx="10" fill="#d1d5db" stroke="#111827" stroke-width="6"/>
+  <path d="M102 44c-10-14 10-19 0-33M136 44c-10-14 10-19 0-33" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round"/>
+</svg>

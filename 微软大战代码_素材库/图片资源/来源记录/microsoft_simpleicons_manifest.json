@@ -1,0 +1,58 @@
+[
+  {
+    "name": "vscode",
+    "slug": "visualstudiocode/vscodium",
+    "local": "微软大战代码_素材库\\图片资源\\战斗地点_VSCode\\simpleicons_vscode.svg",
+    "source": "",
+    "status": "failed: vscodium: <urlopen error _ssl.c:1063: The handshake operation timed out>",
+    "bytes": 0
+  },
+  {
+    "name": "windows",
+    "slug": "windows11/windows10/windows/microsoftwindows",
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\simpleicons_windows.svg",
+    "source": "",
+    "status": "failed: microsoftwindows: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "name": "microsoft",
+    "slug": "microsoft",
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\simpleicons_microsoft.svg",
+    "source": "",
+    "status": "failed: microsoft: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "name": "edge",
+    "slug": "microsoftedge",
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\simpleicons_edge.svg",
+    "source": "",
+    "status": "failed: microsoftedge: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "name": "teams",
+    "slug": "microsoftteams",
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\simpleicons_teams.svg",
+    "source": "",
+    "status": "failed: microsoftteams: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "name": "onedrive",
+    "slug": "microsoftonedrive",
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\simpleicons_onedrive.svg",
+    "source": "",
+    "status": "failed: microsoftonedrive: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "name": "visualstudio",
+    "slug": "visualstudio",
+    "local": "微软大战代码_素材库\\图片资源\\战斗地点_VSCode\\simpleicons_visualstudio.svg",
+    "source": "",
+    "status": "failed: visualstudio: HTTP Error 404: Not Found",
+    "bytes": 0
+  }
+]

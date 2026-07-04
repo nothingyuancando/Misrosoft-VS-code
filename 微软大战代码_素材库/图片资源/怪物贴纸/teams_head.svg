@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect x="26" y="52" width="204" height="152" rx="28" fill="#635bff" stroke="#111827" stroke-width="8"/>
+  <circle cx="92" cy="113" r="28" fill="#fff"/>
+  <circle cx="162" cy="113" r="28" fill="#fff"/>
+  <rect x="64" y="150" width="128" height="28" rx="14" fill="#dedcff"/>
+  <rect x="76" y="28" width="104" height="42" rx="16" fill="#fff" stroke="#111827" stroke-width="6"/>
+  <text x="128" y="57" text-anchor="middle" font-family="Consolas, monospace" font-size="18" font-weight="700" fill="#111827">MEET</text>
+</svg>

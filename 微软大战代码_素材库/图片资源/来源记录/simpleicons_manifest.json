@@ -1,0 +1,86 @@
+[
+  {
+    "local": "微软大战代码_素材库\\图片资源\\战斗地点_VSCode\\simpleicons_vscode.svg",
+    "source": "https://cdn.simpleicons.org/visualstudiocode",
+    "status": "failed: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\simpleicons_windows.svg",
+    "source": "https://cdn.simpleicons.org/windows",
+    "status": "failed: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\simpleicons_microsoft.svg",
+    "source": "https://cdn.simpleicons.org/microsoft",
+    "status": "failed: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\simpleicons_edge.svg",
+    "source": "https://cdn.simpleicons.org/microsoftedge",
+    "status": "failed: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\simpleicons_teams.svg",
+    "source": "https://cdn.simpleicons.org/microsoftteams",
+    "status": "failed: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\simpleicons_onedrive.svg",
+    "source": "https://cdn.simpleicons.org/microsoftonedrive",
+    "status": "failed: HTTP Error 404: Not Found",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\simpleicons_github.svg",
+    "source": "https://cdn.simpleicons.org/github",
+    "status": "downloaded",
+    "bytes": 837
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\simpleicons_git.svg",
+    "source": "https://cdn.simpleicons.org/git",
+    "status": "downloaded",
+    "bytes": 441
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\simpleicons_docker.svg",
+    "source": "https://cdn.simpleicons.org/docker",
+    "status": "downloaded",
+    "bytes": 1780
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\simpleicons_stackoverflow.svg",
+    "source": "https://cdn.simpleicons.org/stackoverflow",
+    "status": "downloaded",
+    "bytes": 456
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\simpleicons_javascript.svg",
+    "source": "https://cdn.simpleicons.org/javascript",
+    "status": "downloaded",
+    "bytes": 989
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\simpleicons_typescript.svg",
+    "source": "https://cdn.simpleicons.org/typescript",
+    "status": "downloaded",
+    "bytes": 1309
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\simpleicons_npm.svg",
+    "source": "https://cdn.simpleicons.org/npm",
+    "status": "downloaded",
+    "bytes": 332
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\simpleicons_coffeescript.svg",
+    "source": "https://cdn.simpleicons.org/coffeescript",
+    "status": "downloaded",
+    "bytes": 1469
+  }
+]

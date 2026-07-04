@@ -1,0 +1,56 @@
+[
+  {
+    "local": "微软大战代码_素材库\\图片资源\\战斗地点_VSCode\\vscode_icon.svg",
+    "source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Visual_Studio_Code_1.35_icon.svg",
+    "status": "failed: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\bsod_windows8.svg",
+    "source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/BSOD_Windows_8.svg",
+    "status": "failed: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\edge_logo_2019.svg",
+    "source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Microsoft_Edge_logo_(2019).svg",
+    "status": "failed: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\windows_logo_2021.svg",
+    "source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Windows_logo_-_2021.svg",
+    "status": "failed: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\microsoft_logo.svg",
+    "source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Microsoft_logo.svg",
+    "status": "failed: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\teams_logo.svg",
+    "source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Microsoft_Office_Teams_(2019%E2%80%932025).svg",
+    "status": "failed: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\onedrive_logo.svg",
+    "source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Microsoft_Office_OneDrive_(2019%E2%80%932025).svg",
+    "status": "failed: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\战斗地点_VSCode\\vscode_screenshot.png",
+    "source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Vscode_screenshot.png",
+    "status": "failed: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>",
+    "bytes": 0
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\clippy_fanart.png",
+    "source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Clippy_fanart.png",
+    "status": "failed: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>",
+    "bytes": 0
+  }
+]

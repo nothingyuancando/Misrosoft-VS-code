@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect x="48" y="38" width="160" height="184" rx="18" fill="#f3f4f6" stroke="#111827" stroke-width="8"/>
+  <path d="M128 42v176" stroke="#111827" stroke-width="6"/>
+  <text x="88" y="112" text-anchor="middle" font-family="Consolas, monospace" font-size="28" fill="#007acc">if</text>
+  <text x="167" y="112" text-anchor="middle" font-family="Consolas, monospace" font-size="26" fill="#dc2626">false</text>
+  <rect x="72" y="144" width="112" height="34" rx="8" fill="#111827"/>
+  <text x="128" y="168" text-anchor="middle" font-family="Consolas, monospace" font-size="22" fill="#fff">{}</text>
+</svg>

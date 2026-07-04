@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#1e1e1e"/>
+  <rect x="0" y="0" width="1280" height="36" fill="#3c3c3c"/>
+  <rect x="0" y="36" width="54" height="684" fill="#333333"/>
+  <rect x="54" y="36" width="220" height="684" fill="#252526"/>
+  <rect x="274" y="36" width="796" height="512" fill="#1e1e1e"/>
+  <rect x="1070" y="36" width="210" height="512" fill="#202020"/>
+  <rect x="274" y="548" width="1006" height="172" fill="#181818"/>
+  <text x="78" y="78" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#cccccc">EXPLORER</text>
+  <text x="306" y="24" font-family="Consolas, monospace" font-size="16" fill="#cccccc">main.ts</text>
+  <text x="390" y="24" font-family="Consolas, monospace" font-size="16" fill="#9cdcfe">defense.js</text>
+  <text x="492" y="24" font-family="Consolas, monospace" font-size="16" fill="#ce9178">final_project.zip</text>
+  <text x="1100" y="76" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#cccccc">WAVE</text>
+  <text x="300" y="584" font-family="Consolas, monospace" font-size="18" fill="#89d185">&gt; TERMINAL</text>
+  <text x="300" y="620" font-family="Consolas, monospace" font-size="16" fill="#cccccc">&gt; print cannon spawned</text>
+  <text x="300" y="650" font-family="Consolas, monospace" font-size="16" fill="#f14c4c">&gt; Windows update soldier approaching</text>
+  <g transform="translate(312 92)">
+    <text x="-18" y="29" text-anchor="end" font-family="Consolas, monospace" font-size="16" fill="#858585">browser</text>
+    <text x="-18" y="91" text-anchor="end" font-family="Consolas, monospace" font-size="16" fill="#858585">editor</text>
+    <text x="-18" y="153" text-anchor="end" font-family="Consolas, monospace" font-size="16" fill="#858585">terminal</text>
+    <text x="-18" y="215" text-anchor="end" font-family="Consolas, monospace" font-size="16" fill="#858585">database</text>
+    <text x="-18" y="277" text-anchor="end" font-family="Consolas, monospace" font-size="16" fill="#858585">slackoff</text>
+    <g fill="#252526" stroke="#3c3c3c" stroke-width="2">
+      <rect x="0" y="0" width="68" height="48"/><rect x="78" y="0" width="68" height="48"/><rect x="156" y="0" width="68" height="48"/><rect x="234" y="0" width="68" height="48"/><rect x="312" y="0" width="68" height="48"/><rect x="390" y="0" width="68" height="48"/><rect x="468" y="0" width="68" height="48"/><rect x="546" y="0" width="68" height="48"/><rect x="624" y="0" width="68" height="48"/>
+      <rect x="0" y="62" width="68" height="48"/><rect x="78" y="62" width="68" height="48"/><rect x="156" y="62" width="68" height="48"/><rect x="234" y="62" width="68" height="48"/><rect x="312" y="62" width="68" height="48"/><rect x="390" y="62" width="68" height="48"/><rect x="468" y="62" width="68" height="48"/><rect x="546" y="62" width="68" height="48"/><rect x="624" y="62" width="68" height="48"/>
+      <rect x="0" y="124" width="68" height="48"/><rect x="78" y="124" width="68" height="48"/><rect x="156" y="124" width="68" height="48"/><rect x="234" y="124" width="68" height="48"/><rect x="312" y="124" width="68" height="48"/><rect x="390" y="124" width="68" height="48"/><rect x="468" y="124" width="68" height="48"/><rect x="546" y="124" width="68" height="48"/><rect x="624" y="124" width="68" height="48"/>
+      <rect x="0" y="186" width="68" height="48"/><rect x="78" y="186" width="68" height="48"/><rect x="156" y="186" width="68" height="48"/><rect x="234" y="186" width="68" height="48"/><rect x="312" y="186" width="68" height="48"/><rect x="390" y="186" width="68" height="48"/><rect x="468" y="186" width="68" height="48"/><rect x="546" y="186" width="68" height="48"/><rect x="624" y="186" width="68" height="48"/>
+      <rect x="0" y="248" width="68" height="48"/><rect x="78" y="248" width="68" height="48"/><rect x="156" y="248" width="68" height="48"/><rect x="234" y="248" width="68" height="48"/><rect x="312" y="248" width="68" height="48"/><rect x="390" y="248" width="68" height="48"/><rect x="468" y="248" width="68" height="48"/><rect x="546" y="248" width="68" height="48"/><rect x="624" y="248" width="68" height="48"/>
+    </g>
+  </g>
+</svg>

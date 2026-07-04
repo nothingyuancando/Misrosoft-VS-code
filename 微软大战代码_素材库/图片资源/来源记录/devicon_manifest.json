@@ -1,0 +1,50 @@
+[
+  {
+    "local": "微软大战代码_素材库\\图片资源\\战斗地点_VSCode\\devicon_vscode_original.svg",
+    "source": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg",
+    "status": "downloaded",
+    "bytes": 3404
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\怪物贴纸\\devicon_windows8_original.svg",
+    "source": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/windows8/windows8-original.svg",
+    "status": "downloaded",
+    "bytes": 276
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\战斗地点_VSCode\\devicon_visualstudio_plain.svg",
+    "source": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/visualstudio/visualstudio-plain.svg",
+    "status": "downloaded",
+    "bytes": 2546
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\devicon_git_original.svg",
+    "source": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg",
+    "status": "downloaded",
+    "bytes": 778
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\devicon_docker_original.svg",
+    "source": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg",
+    "status": "downloaded",
+    "bytes": 4452
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\devicon_javascript_original.svg",
+    "source": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
+    "status": "downloaded",
+    "bytes": 1144
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\devicon_typescript_original.svg",
+    "source": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg",
+    "status": "downloaded",
+    "bytes": 943
+  },
+  {
+    "local": "微软大战代码_素材库\\图片资源\\植物与代码图标\\devicon_npm_original_wordmark.svg",
+    "source": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/npm/npm-original-wordmark.svg",
+    "status": "downloaded",
+    "bytes": 330
+  }
+]

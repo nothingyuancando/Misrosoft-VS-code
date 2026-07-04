@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#0078d7"/>
+  <text x="58" y="86" font-family="Segoe UI, Arial, sans-serif" font-size="58" fill="#fff">:(</text>
+  <text x="58" y="144" font-family="Segoe UI, Arial, sans-serif" font-size="24" fill="#fff">Your code ran into a problem and needs to restart.</text>
+  <text x="58" y="218" font-family="Consolas, monospace" font-size="22" fill="#fff">Stop code: MEMORY_MANAGEMENT</text>
+  <rect x="58" y="252" width="94" height="94" fill="#fff" opacity=".85"/>
+  <text x="172" y="292" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#fff">For more information, blame cache.</text>
+</svg>

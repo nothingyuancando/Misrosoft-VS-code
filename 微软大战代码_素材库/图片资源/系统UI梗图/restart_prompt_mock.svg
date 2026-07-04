@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="280" viewBox="0 0 520 280">
+  <rect width="520" height="280" rx="18" fill="#f3f4f6" stroke="#111827" stroke-width="6"/>
+  <text x="36" y="58" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#111827">Restart required</text>
+  <text x="36" y="105" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#374151">Your project will restart outside active hours.</text>
+  <rect x="36" y="178" width="180" height="48" rx="8" fill="#0078d4"/>
+  <text x="126" y="209" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#fff">Restart now</text>
+  <rect x="240" y="178" width="220" height="48" rx="8" fill="#e5e7eb" stroke="#9ca3af"/>
+  <text x="350" y="209" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#111827">Maybe later?</text>
+</svg>

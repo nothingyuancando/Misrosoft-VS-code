@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="360" viewBox="0 0 520 360">
+  <rect width="520" height="360" rx="18" fill="#f8fafc" stroke="#111827" stroke-width="6"/>
+  <rect x="38" y="34" width="444" height="46" rx="12" fill="#e5e7eb"/>
+  <text x="58" y="64" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#374151">Search apps, settings, and ads</text>
+  <text x="38" y="122" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#111827">Recommended</text>
+  <rect x="38" y="148" width="444" height="64" rx="12" fill="#eef2ff"/>
+  <text x="66" y="187" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#111827">An app you never asked for</text>
+  <rect x="38" y="228" width="444" height="64" rx="12" fill="#fff7ed"/>
+  <text x="66" y="267" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#111827">Try this helpful suggestion</text>
+</svg>
