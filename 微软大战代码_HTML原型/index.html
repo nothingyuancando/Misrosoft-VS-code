@@ -1407,9 +1407,16 @@
         <div class="card-cost">${moneyText(def)}</div>
       `;
       button.addEventListener("click", () => {
-        if (!canPay(def)) return;
+        if (!canPay(def)) {
+          addLog(`${def.name} 资源不足：还需要 ${resourceShortage(def)}。`, "warn");
+          updateUI();
+          return;
+        }
         state.selected = key;
         state.selectedKind = def.type;
+        addLog(def.type === "module"
+          ? `已选择 ${def.name} 模块，请点击一个已有代码植物来挂载。`
+          : `已选择 ${def.name}，请点击左侧可部署格子。`);
         updateUI();
       });
       return button;
@@ -1441,6 +1448,15 @@
 
     function canPay(def) {
       return state.coffee >= (def.coffee || 0) && state.memory >= (def.memory || 0);
+    }
+
+    function resourceShortage(def) {
+      const missing = [];
+      const coffee = Math.max(0, (def.coffee || 0) - state.coffee);
+      const memory = Math.max(0, (def.memory || 0) - state.memory);
+      if (coffee) missing.push(`${Math.ceil(coffee)} coffee`);
+      if (memory) missing.push(`${Math.ceil(memory)} memory`);
+      return missing.join(" / ") || "0";
     }
 
     function pay(def) {
