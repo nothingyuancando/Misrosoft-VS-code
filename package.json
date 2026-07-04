@@ -4,6 +4,11 @@
   "description": "在 VS Code 里运行的代码文件守护小游戏。",
   "version": "0.1.0",
   "publisher": "nothingyuancando",
+  "scripts": {
+    "start": "node scripts/start.js",
+    "package": "npx @vscode/vsce package --no-dependencies",
+    "install-local": "npm run package && code --install-extension misrosoft-vs-code-0.1.0.vsix --force"
+  },
   "engines": {
     "vscode": "^1.88.0"
   },
