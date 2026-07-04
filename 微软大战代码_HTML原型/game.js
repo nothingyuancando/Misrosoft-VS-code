@@ -3,13 +3,24 @@ const MAX_HAND = 4;
 const DRAW_CARD_COST = 25;
 
 const protectedFiles = [
-  { path: "src/main.ts", short: "main.ts", icon: "TS", maxHp: 100 },
-  { path: "src/defense.ts", short: "defense.ts", icon: "TS", maxHp: 115 },
-  { path: "src/waves.json", short: "waves.json", icon: "{}", maxHp: 90 },
-  { path: "assets/plants.svg", short: "plants.svg", icon: "SVG", maxHp: 90 },
-  { path: "README.md", short: "README.md", icon: "MD", maxHp: 95 },
-  { path: "package.json", short: "package.json", icon: "{}", maxHp: 105 },
-  { path: "毕业设计-最终版.zip", short: "最终版.zip", icon: "ZIP", maxHp: 140 }
+  { path: "src/main.ts", short: "main.ts", icon: "TS", maxHp: 100, code: "bootstrapWorkspace(vscode, weapons, coffee);" },
+  { path: "src/defense.ts", short: "defense.ts", icon: "TS", maxHp: 115, code: "export const guard = files.map(file => file.safe);" },
+  { path: "src/waves.json", short: "waves.json", icon: "{}", maxHp: 90, code: "\"spawn\": [\"update\", \"edge\", \"teams\"]" },
+  { path: "assets/plants.svg", short: "plants.svg", icon: "SVG", maxHp: 90, code: "<weapon id=\"print-cannon\" orbit=\"vscode\" />" },
+  { path: "README.md", short: "README.md", icon: "MD", maxHp: 95, code: "## Misrosoft VS Code  // real files are safe" },
+  { path: "package.json", short: "package.json", icon: "{}", maxHp: 105, code: "\"scripts\": { \"survive\": \"vite --host\" }" },
+  { path: "毕业设计-最终版.zip", short: "最终版.zip", icon: "ZIP", maxHp: 140, code: "archive.lock(\"final-final-never-delete.zip\");" }
+];
+
+const pollutionSnippets = [
+  "TypeError: Cannot read properties of undefined",
+  "const everything: any = panic();",
+  "<<<<<<< HEAD   =======   >>>>>>> windows-update",
+  "TODO: 明天一定修，今天先上线",
+  "Module not found: dependency went missing",
+  "SyntaxError: Unexpected token coffee",
+  "CORS policy blocked your last hope",
+  "npm ERR! peer dependency chaos"
 ];
 
 const enemyDefs = {
@@ -221,10 +232,12 @@ const cardDefs = {
 
 const arena = document.getElementById("arena");
 const arenaLayer = document.getElementById("arenaLayer");
+const toastLayer = document.getElementById("toastLayer");
 const playerEl = document.getElementById("player");
 const playerWeapons = document.getElementById("playerWeapons");
 const fileList = document.getElementById("fileList");
 const logEl = document.getElementById("log");
+const codeStatusList = document.getElementById("codeStatusList");
 const cardHand = document.getElementById("cardHand");
 const drawCardBtn = document.getElementById("drawCardBtn");
 const upgradeOverlay = document.getElementById("upgradeOverlay");
@@ -261,6 +274,7 @@ const state = {
   effects: [],
   mines: [],
   popups: [],
+  toasts: [],
   delayed: [],
   hand: [],
   files: [],
@@ -274,11 +288,7 @@ const state = {
   spawnTimer: 0,
   popupTimer: 12,
   nextIncident: "Windows 更新",
-  skillCooldowns: {
-    save: 0,
-    kill: 0,
-    close: 0
-  },
+  functionName: "fixBug",
   uiTimer: 0
 };
 
@@ -310,9 +320,18 @@ function resetGame() {
   state.effects = [];
   state.mines = [];
   state.popups = [];
+  state.toasts = [];
   state.delayed = [];
   state.hand = [];
-  state.files = protectedFiles.map(file => ({ ...file, hp: file.maxHp, deleted: false, lastHit: "" }));
+  state.files = protectedFiles.map(file => ({
+    ...file,
+    hp: file.maxHp,
+    deleted: false,
+    lastHit: "",
+    pollution: 0,
+    problem: "",
+    flash: 0
+  }));
   state.weapons = { print: 1 };
   state.timers = {};
   state.enemyId = 1;
@@ -323,9 +342,10 @@ function resetGame() {
   state.spawnTimer = 0;
   state.popupTimer = 10;
   state.nextIncident = "Windows 更新";
-  state.skillCooldowns = { save: 0, kill: 0, close: 0 };
+  state.functionName = "fixBug";
   state.uiTimer = 0;
   logEl.innerHTML = "";
+  toastLayer.innerHTML = "";
   upgradeOverlay.classList.remove("show");
   incidentModal.classList.remove("show");
   addLog("VS Code 图标已经进入编辑器战场。");
@@ -366,6 +386,17 @@ function addLog(text, type = "") {
   logEl.appendChild(line);
   logEl.scrollTop = logEl.scrollHeight;
   while (logEl.children.length > 90) logEl.removeChild(logEl.firstChild);
+  addToast(text, type);
+}
+
+function addToast(text, type = "") {
+  state.toasts.push({
+    id: Math.random().toString(36).slice(2),
+    text,
+    type,
+    until: performance.now() + 2400
+  });
+  while (state.toasts.length > 3) state.toasts.shift();
 }
 
 function drawCard(announce = true) {
@@ -419,7 +450,7 @@ function resolveCard(key) {
   if (key === "stackoverflow") {
     for (let i = 0; i < 18; i++) {
       const angle = Math.PI * 2 * i / 18;
-      spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 220, 38, "SO", "function");
+      spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 220, 38, "try/catch", "function");
     }
     spawnEnemy("yaml");
     addLog("Stack Overflow 高赞答案全屏飞出，但顺手带来了一个隐藏缩进问题。", "warn");
@@ -478,7 +509,6 @@ function tick(time) {
   }
 
   state.elapsed += dt;
-  updateCooldowns(dt);
   updatePlayer(dt);
   updateSpawns(dt);
   updateWeapons(dt, time);
@@ -488,6 +518,7 @@ function tick(time) {
   updatePickups(dt);
   updatePopups(dt);
   updateDelayed(time);
+  updateCodeLines(dt, time);
   updateEffects(time);
   checkBoss(time);
   renderActors();
@@ -496,12 +527,6 @@ function tick(time) {
     state.uiTimer = .12;
     renderRuntimePanels();
   }
-}
-
-function updateCooldowns(dt) {
-  Object.keys(state.skillCooldowns).forEach(key => {
-    state.skillCooldowns[key] = Math.max(0, state.skillCooldowns[key] - dt);
-  });
 }
 
 function updatePlayer(dt) {
@@ -526,8 +551,7 @@ function normalizeInputKey(event) {
     KeyA: "a",
     KeyD: "d",
     KeyW: "w",
-    KeyS: "s",
-    Space: " "
+    KeyS: "s"
   };
   return codeMap[event.code] || event.key.toLowerCase();
 }
@@ -571,6 +595,7 @@ function spawnEnemy(kind, x = null, y = null) {
     damage: def.damage,
     hitCooldown: 0,
     skillTimer: 0,
+    codeTouchCooldown: .6 + Math.random() * 1.4,
     copied: false,
     boss: Boolean(def.boss)
   });
@@ -619,7 +644,7 @@ function handlePrint(dt) {
   const angle = target ? Math.atan2(target.y - state.player.y, target.x - state.player.x) : -Math.PI / 2;
   for (let i = 0; i < Math.min(4, level); i++) {
     const spread = (i - (Math.min(4, level) - 1) / 2) * .13;
-    spawnProjectile(state.player.x, state.player.y, Math.cos(angle + spread), Math.sin(angle + spread), 340, 18 + level * 3, ";", "print");
+    spawnProjectile(state.player.x, state.player.y, Math.cos(angle + spread), Math.sin(angle + spread), 340, 18 + level * 3, "console.log()", "print");
   }
 }
 
@@ -628,7 +653,7 @@ function handleJavaScript(dt) {
   if (!level) return;
   if (!tickTimer("javascript", dt, Math.max(.22, .46 - level * .035))) return;
   const angle = Math.random() * Math.PI * 2;
-  spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 390, 10 + level * 2, "JS", "javascript");
+  spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 390, 10 + level * 2, "=> {}", "javascript");
 }
 
 function handleTypeScript(dt) {
@@ -638,7 +663,7 @@ function handleTypeScript(dt) {
   const target = dangerEnemy();
   if (!target) return;
   const angle = Math.atan2(target.y - state.player.y, target.x - state.player.x);
-  spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 430, 28 + level * 6, "TS", "typescript", "ts");
+  spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 430, 28 + level * 6, ": Guard", "typescript", "ts");
 }
 
 function handleDocker(dt, time) {
@@ -695,7 +720,8 @@ function handleFunction(dt, time) {
   if (!tickTimer("function", dt, Math.max(1.35, 2.4 - level * .16))) return;
   const target = nearestEnemy();
   const angle = target ? Math.atan2(target.y - state.player.y, target.x - state.player.x) : Math.random() * Math.PI * 2;
-  spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 250, 24 + level * 5, "f(x)", "function", "function");
+  const label = `${state.functionName}()`;
+  spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 250, 24 + level * 5, label, "function", "function");
 }
 
 function handlePython(dt) {
@@ -734,7 +760,7 @@ function handleTomcat(dt) {
   const base = target ? Math.atan2(target.y - state.player.y, target.x - state.player.x) : 0;
   for (let i = 0; i < Math.min(3, level); i++) {
     const angle = base + (i - 1) * .18;
-    spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 285, 23 + level * 4, "8080", "tomcat", "git");
+    spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 285, 23 + level * 4, "@8080", "tomcat", "git");
   }
 }
 
@@ -781,6 +807,7 @@ function updateProjectiles(dt) {
     if (hit) {
       hit.hp -= projectile.damage * counterMultiplier(projectile.source, hit.kind);
       if (projectile.source === "typescript") hit.speed *= .985;
+      repairCodeNear(hit.x, hit.y, 7 + projectile.damage * .16, projectile.source);
       state.projectiles = state.projectiles.filter(item => item.id !== projectile.id);
       if (hit.hp <= 0) killEnemy(hit);
     } else if (projectile.life <= 0 || projectile.x < -60 || projectile.x > state.width + 60 || projectile.y < -60 || projectile.y > state.height + 60) {
@@ -793,6 +820,7 @@ function updateEnemies(dt, time) {
   for (const enemy of [...state.enemies]) {
     enemy.hitCooldown = Math.max(0, enemy.hitCooldown - dt);
     enemy.skillTimer += dt;
+    enemy.codeTouchCooldown = Math.max(0, enemy.codeTouchCooldown - dt);
     const angle = Math.atan2(state.player.y - enemy.y, state.player.x - enemy.x);
     enemy.x += Math.cos(angle) * enemy.speed * dt;
     enemy.y += Math.sin(angle) * enemy.speed * dt;
@@ -918,10 +946,18 @@ function damageRandomFile(amount, source, loud = true) {
     return;
   }
   const file = candidates[Math.floor(Math.random() * candidates.length)];
+  damageFile(file, amount, source, loud);
+}
+
+function damageFile(file, amount, source, loud = true) {
+  if (!file || file.deleted) return;
   file.hp = Math.max(0, file.hp - amount);
   file.lastHit = source;
+  contaminateFile(file, source, amount * 1.8, false);
   if (file.hp <= 0 && !file.deleted) {
     file.deleted = true;
+    file.pollution = 100;
+    file.problem = "throw new Error(\"already deleted\")";
     addLog(`${source} 打穿 ${file.path}：already deleted。真实文件仍然安全。`, "bad");
     if (remainingFiles() <= 0) loseGame("Explorer 全部变红。");
   } else if (loud) {
@@ -939,7 +975,51 @@ function healWorstFile(amount, loud = true) {
     .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
   if (!file) return;
   file.hp = Math.min(file.maxHp, file.hp + amount);
+  repairFileCode(file, amount * 1.6);
   if (loud) addLog(`${file.path} 被恢复了一点工作区状态。`, "good");
+}
+
+function contaminateFile(file, source, amount, loud = true) {
+  if (!file || file.deleted) return;
+  const before = file.pollution;
+  file.pollution = clamp(file.pollution + amount, 0, 100);
+  file.problem = file.problem || pollutionSnippets[Math.floor(Math.random() * pollutionSnippets.length)];
+  file.flash = .35;
+  if (loud && before < 60 && file.pollution >= 60) {
+    addLog(`${source} 把 ${file.short} 污染成：${file.problem}`, "warn");
+  }
+}
+
+function repairFileCode(file, amount, source = "") {
+  if (!file || file.deleted || file.pollution <= 0) return false;
+  const before = file.pollution;
+  file.pollution = clamp(file.pollution - amount, 0, 100);
+  file.flash = .28;
+  if (before >= 60 && file.pollution < 60) {
+    addLog(`${source || "代码弹幕"} 修复了 ${file.short} 的危险报错。`, "good");
+  }
+  if (file.pollution <= 0) file.problem = "";
+  return true;
+}
+
+function repairCodeNear(x, y, amount, source) {
+  const target = state.files
+    .filter(file => !file.deleted && file.pollution > 0)
+    .sort((a, b) => b.pollution - a.pollution || a.hp / a.maxHp - b.hp / b.maxHp)[0];
+  if (target) {
+    repairFileCode(target, amount, weaponDefs[source]?.name || "代码弹幕");
+  }
+}
+
+function updateCodeLines(dt) {
+  state.files.forEach(file => {
+    file.flash = Math.max(0, file.flash - dt);
+    if (!file.deleted && file.pollution > 0 && state.running && !state.paused) {
+      file.pollution = Math.max(0, file.pollution - dt * 1.8);
+      if (file.pollution <= 0) file.problem = "";
+    }
+  });
+  state.toasts = state.toasts.filter(toast => toast.until > performance.now());
 }
 
 function killEnemy(enemy) {
@@ -1009,6 +1089,15 @@ function showUpgradeChoices() {
 }
 
 function unlockOrLevelWeapon(key) {
+  if (key === "function" && !state.weapons.function) {
+    const customName = window.prompt("给函数炮命名：function ______()", state.functionName);
+    if (customName) {
+      state.functionName = customName
+        .trim()
+        .replace(/[^\w\u4e00-\u9fa5$]/g, "")
+        .slice(0, 14) || state.functionName;
+    }
+  }
   state.weapons[key] = Math.min(8, (state.weapons[key] || 0) + 1);
   addLog(`${weaponDefs[key].name} 升到 Lv.${state.weapons[key]}。`, "good");
 }
@@ -1132,32 +1221,12 @@ function showIncidentModal() {
   incidentModal.classList.add("show");
 }
 
-function useSaveSkill() {
-  if (state.skillCooldowns.save > 0 || state.gameOver) return;
-  state.skillCooldowns.save = 8;
-  resolveCard("ctrlS");
-  renderAll();
-}
-
-function useKillSkill() {
-  if (state.skillCooldowns.kill > 0 || state.gameOver) return;
-  state.skillCooldowns.kill = 12;
-  killDangerEnemy();
-  renderAll();
-}
-
-function useCloseSkill() {
-  if (state.skillCooldowns.close > 0 || state.gameOver) return;
-  state.skillCooldowns.close = 11;
-  closePopups();
-  renderAll();
-}
-
 function renderAll() {
   renderFiles();
   renderHand();
   renderWeapons();
   renderPlayerWeapons();
+  renderCodeStatus();
   renderEvents();
   renderActors();
   updateUI();
@@ -1167,6 +1236,7 @@ function renderRuntimePanels() {
   renderFiles();
   renderWeapons();
   renderPlayerWeapons();
+  renderCodeStatus();
   renderEvents();
   updateUI();
 }
@@ -1193,6 +1263,19 @@ function renderWeapons() {
         <img src="${def.icon}" alt="" />
         <span>${def.name}</span>
         <strong>Lv.${level}</strong>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderCodeStatus() {
+  codeStatusList.innerHTML = state.files.map(file => {
+    const status = file.deleted || file.pollution >= 72 ? "corrupted" : file.pollution >= 28 ? "damaged" : "clean";
+    const label = file.deleted ? "deleted" : file.pollution >= 72 ? "broken" : file.pollution >= 28 ? "dirty" : "safe";
+    return `
+      <div class="code-status-item ${status}">
+        <span>${file.deleted ? "already deleted" : file.short}</span>
+        <strong>${label}</strong>
       </div>
     `;
   }).join("");
@@ -1270,6 +1353,15 @@ function renderActors() {
       <div class="effect ${effect.type || ""}" style="left:${effect.x}px;top:${effect.y}px"></div>
     `)
   ].join("");
+  renderToasts();
+}
+
+function renderToasts() {
+  const now = performance.now();
+  state.toasts = state.toasts.filter(toast => toast.until > now);
+  toastLayer.innerHTML = state.toasts.map(toast => `
+    <div class="toast-line ${toast.type || ""}">${escapeHtml(toast.text)}</div>
+  `).join("");
 }
 
 function updateUI() {
@@ -1285,19 +1377,9 @@ function updateUI() {
   document.getElementById("startBtn").textContent = state.paused ? "继续" : state.running && !state.gameOver ? "运行中" : "开始";
   document.getElementById("startBtn").disabled = state.running && !state.paused && !state.gameOver;
   drawCardBtn.disabled = state.hand.length >= MAX_HAND || state.coffee < DRAW_CARD_COST || state.gameOver;
-  document.getElementById("saveCooldown").textContent = cooldownText(state.skillCooldowns.save);
-  document.getElementById("killCooldown").textContent = cooldownText(state.skillCooldowns.kill);
-  document.getElementById("closeCooldown").textContent = cooldownText(state.skillCooldowns.close);
-  document.getElementById("saveSkillBtn").disabled = state.skillCooldowns.save > 0;
-  document.getElementById("killSkillBtn").disabled = state.skillCooldowns.kill > 0;
-  document.getElementById("closeSkillBtn").disabled = state.skillCooldowns.close > 0;
   document.getElementById("safetyStatus").textContent = state.gameOver
     ? "simulation only: real files are safe"
     : "real files are safe";
-}
-
-function cooldownText(value) {
-  return value > 0 ? `${Math.ceil(value)}s` : "ready";
 }
 
 function formatTime(seconds) {
@@ -1322,13 +1404,18 @@ function shuffle(items) {
   return copy;
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
 document.getElementById("startBtn").addEventListener("click", startGame);
 document.getElementById("pauseBtn").addEventListener("click", togglePause);
 document.getElementById("resetBtn").addEventListener("click", resetGame);
 document.getElementById("modalResetBtn").addEventListener("click", resetGame);
-document.getElementById("saveSkillBtn").addEventListener("click", useSaveSkill);
-document.getElementById("killSkillBtn").addEventListener("click", useKillSkill);
-document.getElementById("closeSkillBtn").addEventListener("click", useCloseSkill);
 drawCardBtn.addEventListener("click", buyCard);
 arenaLayer.addEventListener("click", event => {
   const popup = event.target.closest(".popup-threat");
@@ -1340,15 +1427,9 @@ arenaLayer.addEventListener("click", event => {
 
 window.addEventListener("keydown", event => {
   const key = normalizeInputKey(event);
-  if (["arrowleft", "arrowright", "arrowup", "arrowdown", "w", "a", "s", "d", " "].includes(key)) {
+  if (["arrowleft", "arrowright", "arrowup", "arrowdown", "w", "a", "s", "d"].includes(key)) {
     event.preventDefault();
   }
-  if (key === " ") {
-    useSaveSkill();
-    return;
-  }
-  if (key === "q") useKillSkill();
-  if (key === "e") useCloseSkill();
   state.keys.add(key);
 });
 

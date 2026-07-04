@@ -81,6 +81,7 @@
             <span>}</span>
           </div>
           <div id="arenaLayer" class="arena-layer"></div>
+          <div id="toastLayer" class="toast-layer" aria-hidden="true"></div>
           <div class="player" id="player">
             <div id="playerWeapons" class="player-weapons" aria-hidden="true"></div>
             <img src="../微软大战代码_素材库/图片资源/战斗地点_VSCode/devicon_vscode_original.svg" alt="" />
@@ -100,7 +101,7 @@
         <div class="terminal-head">
           <span>Terminal</span>
           <span>Output</span>
-          <span>Survivor Log</span>
+          <span>Battle Log</span>
         </div>
         <div class="terminal-body" id="log"></div>
       </section>
@@ -110,24 +111,13 @@
       <div class="panel-head">Battle Kit</div>
       <div class="side-content">
         <div class="wave-box">
-          <h3>快捷锦囊</h3>
-          <button id="saveSkillBtn" class="skill-btn">
-            <span>Ctrl+S</span>
-            <strong id="saveCooldown">ready</strong>
-          </button>
-          <button id="killSkillBtn" class="skill-btn">
-            <span>kill -9</span>
-            <strong id="killCooldown">ready</strong>
-          </button>
-          <button id="closeSkillBtn" class="skill-btn">
-            <span>Alt+F4</span>
-            <strong id="closeCooldown">ready</strong>
-          </button>
+          <h3>武器构筑</h3>
+          <div id="weaponList" class="weapon-list"></div>
         </div>
 
         <div class="wave-box">
-          <h3>武器构筑</h3>
-          <div id="weaponList" class="weapon-list"></div>
+          <h3>代码污染</h3>
+          <div id="codeStatusList" class="code-status-list"></div>
         </div>
 
         <div class="wave-box">

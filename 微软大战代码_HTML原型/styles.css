@@ -324,8 +324,7 @@ button {
 }
 
 .control-btn,
-.draw-card-btn,
-.skill-btn {
+.draw-card-btn {
   border: 1px solid #4b5563;
   border-radius: 8px;
   background: #252526;
@@ -341,8 +340,7 @@ button {
 }
 
 .control-btn:hover,
-.draw-card-btn:hover,
-.skill-btn:hover {
+.draw-card-btn:hover {
   filter: brightness(1.08);
 }
 
@@ -505,7 +503,7 @@ button:disabled {
   inset: 14px auto auto 18px;
   display: grid;
   gap: 8px;
-  color: rgba(156, 220, 254, .16);
+  color: rgba(156, 220, 254, .08);
   font-family: Consolas, monospace;
   font-size: 15px;
   pointer-events: none;
@@ -516,6 +514,47 @@ button:disabled {
   position: absolute;
   inset: 0;
   z-index: 2;
+}
+
+.toast-layer {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  z-index: 9;
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.toast-line {
+  max-width: min(560px, 88%);
+  border: 1px solid rgba(75, 85, 99, .9);
+  border-radius: 7px;
+  background: rgba(17, 24, 39, .88);
+  color: #d4d4d4;
+  padding: 6px 9px;
+  font-family: Consolas, "Microsoft YaHei", monospace;
+  font-size: 12px;
+  line-height: 1.25;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .32);
+  animation: toastFloat 2.4s ease-out forwards;
+}
+
+.toast-line.good {
+  border-color: rgba(137, 209, 133, .65);
+  color: #bbf7d0;
+}
+
+.toast-line.warn {
+  border-color: rgba(220, 220, 170, .7);
+  color: #fde68a;
+}
+
+.toast-line.bad {
+  border-color: rgba(241, 76, 76, .75);
+  color: #fecaca;
 }
 
 .player,
@@ -677,9 +716,11 @@ button:disabled {
 
 .projectile {
   z-index: 3;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
+  min-width: 24px;
+  max-width: 96px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
   background: #facc15;
   border: 2px solid #111827;
   box-shadow: 0 0 12px rgba(250, 204, 21, .55);
@@ -689,6 +730,9 @@ button:disabled {
   font-family: Consolas, monospace;
   font-size: 10px;
   font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .projectile.ts {
@@ -895,30 +939,16 @@ button:disabled {
   color: #fff;
 }
 
-.skill-btn {
-  width: 100%;
-  min-height: 34px;
-  margin-top: 6px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  text-align: left;
-}
-
-.skill-btn strong {
-  color: #dcdcaa;
-  font-family: Consolas, monospace;
-  font-size: 11px;
-}
-
 .weapon-list,
-.event-list {
+.event-list,
+.code-status-list {
   display: grid;
   gap: 7px;
 }
 
 .weapon-item,
-.event-item {
+.event-item,
+.code-status-item {
   display: grid;
   grid-template-columns: 28px minmax(0, 1fr) auto;
   gap: 7px;
@@ -936,7 +966,8 @@ button:disabled {
 }
 
 .weapon-item span,
-.event-item span {
+.event-item span,
+.code-status-item span {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -944,10 +975,38 @@ button:disabled {
 }
 
 .weapon-item strong,
-.event-item strong {
+.event-item strong,
+.code-status-item strong {
   color: #bbf7d0;
   font-family: Consolas, monospace;
   font-size: 11px;
+}
+
+.code-status-item {
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+}
+
+.code-status-item::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #89d185;
+  box-shadow: 0 0 10px rgba(137, 209, 133, .35);
+}
+
+.code-status-item.damaged::before {
+  background: #dcdcaa;
+  box-shadow: 0 0 10px rgba(220, 220, 170, .35);
+}
+
+.code-status-item.corrupted::before {
+  background: #f14c4c;
+  box-shadow: 0 0 10px rgba(241, 76, 76, .42);
+}
+
+.code-status-item.corrupted strong {
+  color: #fca5a5;
 }
 
 .tip-list p {
@@ -958,7 +1017,7 @@ button:disabled {
 }
 
 .terminal {
-  flex: 0 0 clamp(108px, 16vh, 140px);
+  flex: 0 0 clamp(92px, 13vh, 122px);
   background: #181818;
   border-top: 1px solid var(--line);
   display: flex;
@@ -967,8 +1026,8 @@ button:disabled {
 }
 
 .terminal-head {
-  height: 28px;
-  flex: 0 0 28px;
+  height: 26px;
+  flex: 0 0 26px;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -983,10 +1042,10 @@ button:disabled {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  padding: 8px 14px;
+  padding: 7px 14px;
   font-family: Consolas, "Microsoft YaHei", monospace;
   font-size: 12px;
-  line-height: 1.38;
+  line-height: 1.35;
   color: #d4d4d4;
 }
 
@@ -1112,4 +1171,16 @@ button:disabled {
 @keyframes pop {
   from { opacity: 1; scale: .35; }
   to { opacity: 0; scale: 1.5; }
+}
+
+@keyframes corruptShake {
+  from { translate: -1px 0; }
+  to { translate: 1px 0; }
+}
+
+@keyframes toastFloat {
+  0% { opacity: 0; transform: translateY(8px); }
+  12% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-8px); }
 }
