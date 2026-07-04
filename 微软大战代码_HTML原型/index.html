@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>微软大战代码：请不要关闭你的电脑</title>
+  <title>微软大战代码：VS Code 桌面幸存者</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="app">
     <header class="titlebar">
       <img src="../微软大战代码_素材库/图片资源/战斗地点_VSCode/devicon_vscode_original.svg" alt="" />
-      <span>微软大战代码：请不要关闭你的电脑</span>
+      <span>微软大战代码：VS Code 桌面幸存者</span>
       <span class="spacer"></span>
       <span class="window-dot"></span>
       <span class="window-dot"></span>
@@ -19,35 +19,26 @@
 
     <nav class="activity" aria-label="活动栏">
       <div class="icon active">EX</div>
-      <div class="icon">SC</div>
-      <div class="icon">DB</div>
-      <div class="icon">SET</div>
+      <div class="icon">RUN</div>
+      <div class="icon">GIT</div>
+      <div class="icon">BUG</div>
     </nav>
 
     <aside class="explorer">
       <div class="panel-head">Explorer</div>
       <div class="resource-strip">
         <div class="resource">
-          <span>coffee</span>
-          <strong id="coffeeValue">175</strong>
+          <span>coffee exp</span>
+          <strong id="coffeeValue">0</strong>
         </div>
         <div class="resource">
-          <span>memory</span>
-          <strong id="memoryValue">70</strong>
+          <span>level</span>
+          <strong id="levelValue">1</strong>
         </div>
       </div>
-      <div class="workspace-files">
-        <div class="workspace-title">
-          <span>Misrosoft-VS-code</span>
-          <strong id="guardValue">7/7</strong>
-        </div>
-        <div class="file-tree" id="fileTree"></div>
-      </div>
-      <div class="deck">
-        <div class="deck-title">plants/</div>
-        <div id="plantCards" class="card-grid"></div>
-        <div class="deck-title">modules/</div>
-        <div id="moduleCards" class="card-grid"></div>
+      <div class="file-panel">
+        <div class="deck-title">workspace/</div>
+        <div id="fileList" class="file-list"></div>
       </div>
     </aside>
 
@@ -55,14 +46,16 @@
       <div class="tabs">
         <div class="tab">src/main.ts</div>
         <div class="tab active">src/defense.ts</div>
-        <div class="tab">毕业设计-最终版.zip</div>
+        <div class="tab">README.md</div>
       </div>
 
       <div class="status-row">
-        <div class="pill">wave <strong id="waveValue">0</strong>/5</div>
-        <div class="pill">files safe <strong id="livesValue">7</strong></div>
-        <div class="pill">selected <strong id="selectedValue">none</strong></div>
-        <div class="pill">status <strong id="stateValue">ready</strong></div>
+        <div class="pill">time <strong id="timeValue">00:00</strong></div>
+        <div class="pill">files <strong id="filesValue">7/7</strong></div>
+        <div class="pill">hp <strong id="hpValue">100</strong></div>
+        <div class="pill">hand <strong id="handValue">0</strong>/4</div>
+        <div class="pill">threat <strong id="threatValue">calm</strong></div>
+        <div class="pill">boss <strong id="bossValue">sleeping</strong></div>
         <div class="run-controls">
           <button id="startBtn" class="control-btn primary">开始</button>
           <button id="pauseBtn" class="control-btn">暂停</button>
@@ -70,70 +63,95 @@
         </div>
       </div>
 
-      <section class="battle-shell">
-        <div class="row-labels" id="rowLabels"></div>
-        <div class="board-wrap" id="boardWrap">
-          <div class="board" id="board"></div>
-          <div class="actor-layer" id="actorLayer"></div>
+      <section class="hand-zone" aria-label="锦囊手牌">
+        <div class="hand-meta">
+          <span>tricks/</span>
+          <strong id="drawCostValue">25 coffee</strong>
+          <button id="drawCardBtn" class="draw-card-btn" title="消耗 coffee 抽一张锦囊">抽卡</button>
         </div>
+        <div class="card-hand" id="cardHand"></div>
+      </section>
+
+      <section class="arena-shell">
+        <div id="arena" class="arena" tabindex="0" aria-label="VS Code 编辑器战场">
+          <div class="code-rain" aria-hidden="true">
+            <span>function guard(workspace) {</span>
+            <span>  while (coffee &gt; 0) commit("safe");</span>
+            <span>  return files.map(file =&gt; file.safe);</span>
+            <span>}</span>
+          </div>
+          <div id="arenaLayer" class="arena-layer"></div>
+          <div class="player" id="player">
+            <div id="playerWeapons" class="player-weapons" aria-hidden="true"></div>
+            <img src="../微软大战代码_素材库/图片资源/战斗地点_VSCode/devicon_vscode_original.svg" alt="" />
+            <span class="cursor-core"></span>
+            <span class="cursor-label">VS CODE</span>
+          </div>
+          <div id="upgradeOverlay" class="upgrade-overlay">
+            <div class="upgrade-dialog">
+              <h2>选择一个升级</h2>
+              <div id="upgradeChoices" class="upgrade-choices"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="terminal">
+        <div class="terminal-head">
+          <span>Terminal</span>
+          <span>Output</span>
+          <span>Survivor Log</span>
+        </div>
+        <div class="terminal-body" id="log"></div>
       </section>
     </main>
 
     <aside class="side">
-      <div class="panel-head">Minimap</div>
+      <div class="panel-head">Battle Kit</div>
       <div class="side-content">
         <div class="wave-box">
-          <h3>下一波</h3>
-          <div class="wave-list" id="nextWave"></div>
+          <h3>快捷锦囊</h3>
+          <button id="saveSkillBtn" class="skill-btn">
+            <span>Ctrl+S</span>
+            <strong id="saveCooldown">ready</strong>
+          </button>
+          <button id="killSkillBtn" class="skill-btn">
+            <span>kill -9</span>
+            <strong id="killCooldown">ready</strong>
+          </button>
+          <button id="closeSkillBtn" class="skill-btn">
+            <span>Alt+F4</span>
+            <strong id="closeCooldown">ready</strong>
+          </button>
         </div>
+
         <div class="wave-box">
-          <h3>进程状态</h3>
-          <div class="mini-stat"><span>植物</span><strong id="plantCount">0</strong></div>
-          <div class="mini-stat"><span>敌人</span><strong id="enemyCount">0</strong></div>
-          <div class="mini-stat"><span>子弹</span><strong id="bulletCount">0</strong></div>
-          <div class="mini-stat"><span>更新进度</span><strong id="updateValue">0%</strong></div>
+          <h3>武器构筑</h3>
+          <div id="weaponList" class="weapon-list"></div>
         </div>
+
         <div class="wave-box">
-          <h3>守护文件</h3>
-          <div class="protected-list" id="protectedList"></div>
+          <h3>下一类事故</h3>
+          <div id="eventList" class="event-list"></div>
         </div>
+
         <div class="wave-box">
-          <h3>函数炮公式</h3>
-          <div class="formula-form">
-            <label class="formula-row">
-              <span>y =</span>
-              <input id="functionInput" value="sin(x + t) * 0.33" spellcheck="false" />
-            </label>
-            <button id="applyFunctionBtn" class="control-btn">应用函数</button>
-            <div class="formula-current" id="formulaValue">sin(x + t) * 0.33</div>
-            <div class="formula-help">可用 x、t、sin、cos、tan、abs、sqrt、pow、min、max。结果会被限制在安全高度内。</div>
+          <h3>提交目标</h3>
+          <div class="tip-list">
+            <p>survive_until_commit: 03:00</p>
+            <p>workspace_integrity: guarded</p>
+            <p>real_files: untouched</p>
           </div>
-        </div>
-        <div class="wave-box">
-          <h3>组合缓存</h3>
-          <div class="mini-stat"><span>print + for</span><strong>连发</strong></div>
-          <div class="mini-stat"><span>if + else</span><strong>反击</strong></div>
-          <div class="mini-stat"><span>bug + rollback</span><strong>击退</strong></div>
-          <div class="mini-stat"><span>try-catch</span><strong>保险</strong></div>
         </div>
       </div>
     </aside>
-
-    <section class="terminal">
-      <div class="terminal-head">
-        <span>Terminal</span>
-        <span>Output</span>
-        <span>Problems</span>
-      </div>
-      <div class="terminal-body" id="log"></div>
-    </section>
   </div>
 
   <div class="statusbar">
-    <span>branch: main</span>
+    <span>branch: survivor-mode</span>
     <span>encoding: UTF-8</span>
-    <span>mode: workspace-guardian</span>
-    <span id="safetyStatus">no real files will be deleted</span>
+    <span>mode: desktop-survivor</span>
+    <span id="safetyStatus">simulation only: real files are safe</span>
   </div>
 
   <div class="incident-overlay" id="incidentModal" role="dialog" aria-modal="true" aria-labelledby="incidentTitle">

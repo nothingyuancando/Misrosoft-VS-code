@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Port 8080 enemy">
+  <rect width="96" height="96" rx="18" fill="#2d1b1b"/>
+  <rect x="18" y="28" width="60" height="40" rx="8" fill="#111827" stroke="#f14c4c" stroke-width="4"/>
+  <circle cx="31" cy="48" r="5" fill="#f14c4c"/>
+  <circle cx="48" cy="48" r="5" fill="#facc15"/>
+  <circle cx="65" cy="48" r="5" fill="#f14c4c"/>
+  <text x="48" y="83" text-anchor="middle" font-family="Consolas,monospace" font-size="17" font-weight="700" fill="#fca5a5">:8080</text>
+</svg>

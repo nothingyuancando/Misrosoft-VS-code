@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Python tool plant">
+  <defs>
+    <linearGradient id="pyA" x1="18" x2="72" y1="16" y2="76" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3776AB"/>
+      <stop offset="1" stop-color="#4B8BBE"/>
+    </linearGradient>
+    <linearGradient id="pyB" x1="24" x2="78" y1="18" y2="82" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE873"/>
+      <stop offset="1" stop-color="#FFD43B"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="18" fill="#1f1f21"/>
+  <path d="M28 20h25c10 0 15 5 15 15v9H42c-8 0-14 6-14 14v5H18V35c0-10 5-15 10-15Z" fill="url(#pyA)"/>
+  <path d="M68 76H43c-10 0-15-5-15-15v-9h26c8 0 14-6 14-14v-5h10v28c0 10-5 15-10 15Z" fill="url(#pyB)"/>
+  <circle cx="39" cy="31" r="4" fill="#fff"/>
+  <circle cx="57" cy="65" r="4" fill="#1f1f21"/>
+  <path d="M24 74c8 7 40 7 48 0" fill="none" stroke="#89d185" stroke-width="5" stroke-linecap="round"/>
+</svg>

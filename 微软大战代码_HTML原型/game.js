@@ -1,260 +1,362 @@
 const ASSET = "../微软大战代码_素材库/图片资源/";
-const ROWS = 7;
-const COLS = 11;
-const BUILD_COLS = 7;
-const CELL_W = 66;
-const CELL_H = 54;
-const GAP = 6;
+const MAX_HAND = 4;
+const DRAW_CARD_COST = 25;
+
 const protectedFiles = [
-  { path: "src/main.ts", short: "main.ts", icon: "TS" },
-  { path: "src/defense.ts", short: "defense.ts", icon: "TS" },
-  { path: "src/waves.json", short: "waves.json", icon: "{}" },
-  { path: "assets/plants.svg", short: "plants.svg", icon: "SVG" },
-  { path: "README.md", short: "README.md", icon: "MD" },
-  { path: "package.json", short: "package.json", icon: "{}" },
-  { path: "毕业设计-最终版.zip", short: "最终版.zip", icon: "ZIP" }
+  { path: "src/main.ts", short: "main.ts", icon: "TS", maxHp: 100 },
+  { path: "src/defense.ts", short: "defense.ts", icon: "TS", maxHp: 115 },
+  { path: "src/waves.json", short: "waves.json", icon: "{}", maxHp: 90 },
+  { path: "assets/plants.svg", short: "plants.svg", icon: "SVG", maxHp: 90 },
+  { path: "README.md", short: "README.md", icon: "MD", maxHp: 95 },
+  { path: "package.json", short: "package.json", icon: "{}", maxHp: 105 },
+  { path: "毕业设计-最终版.zip", short: "最终版.zip", icon: "ZIP", maxHp: 140 }
 ];
-const rowNames = protectedFiles.map(file => file.short);
-
-const plantDefs = {
-  coffee: {
-    type: "plant",
-    name: "coffee 机",
-    icon: ASSET + "植物与代码图标/plant_coffee_machine.svg",
-    coffee: 50,
-    memory: 0,
-    hp: 90,
-    text: "产咖啡"
-  },
-  print: {
-    type: "plant",
-    name: "print 炮",
-    icon: ASSET + "植物与代码图标/plant_print_cannon.svg",
-    coffee: 100,
-    memory: 0,
-    hp: 105,
-    text: "字符弹"
-  },
-  wall: {
-    type: "plant",
-    name: "if 墙",
-    icon: ASSET + "植物与代码图标/plant_if_wall.svg",
-    coffee: 75,
-    memory: 0,
-    hp: 280,
-    text: "阻挡"
-  },
-  bug: {
-    type: "plant",
-    name: "bug 雷",
-    icon: ASSET + "植物与代码图标/plant_bug_mine.svg",
-    coffee: 125,
-    memory: 0,
-    hp: 55,
-    text: "爆炸"
-  },
-  rollback: {
-    type: "plant",
-    name: "rollback",
-    icon: ASSET + "植物与代码图标/plant_rollback.svg",
-    coffee: 150,
-    memory: 0,
-    hp: 110,
-    text: "击退"
-  },
-  function: {
-    type: "plant",
-    name: "函数炮",
-    icon: ASSET + "植物与代码图标/plant_function_cannon.svg",
-    coffee: 200,
-    memory: 0,
-    hp: 100,
-    text: "曲线弹"
-  }
-};
-
-const moduleDefs = {
-  for: {
-    type: "module",
-    name: "for",
-    icon: ASSET + "植物与代码图标/module_for_loop.svg",
-    coffee: 0,
-    memory: 40,
-    mark: "for",
-    text: "连发"
-  },
-  if: {
-    type: "module",
-    name: "if",
-    icon: ASSET + "植物与代码图标/module_if_filter.svg",
-    coffee: 0,
-    memory: 30,
-    mark: "if",
-    text: "优先"
-  },
-  else: {
-    type: "module",
-    name: "else",
-    icon: ASSET + "植物与代码图标/module_else_plate.svg",
-    coffee: 0,
-    memory: 35,
-    mark: "else",
-    text: "反击"
-  },
-  trycatch: {
-    type: "module",
-    name: "try-catch",
-    icon: ASSET + "植物与代码图标/module_try_catch_shield.svg",
-    coffee: 0,
-    memory: 50,
-    mark: "try",
-    text: "保险"
-  }
-};
 
 const enemyDefs = {
   update: {
-    name: "更新兵",
+    name: "Windows 更新",
     icon: ASSET + "怪物贴纸/windows_update_head.svg",
-    hp: 105,
-    speed: .155,
-    damage: 16,
-    attackRate: 1100,
+    hp: 46,
+    speed: 54,
+    damage: 10,
+    xp: 8,
     tag: "37%"
   },
-  restart: {
-    name: "重启车",
-    icon: ASSET + "怪物贴纸/restart_head.svg",
-    hp: 70,
-    speed: .31,
-    damage: 22,
-    attackRate: 900,
-    tag: "restart"
-  },
   edge: {
-    name: "Edge 传教士",
+    name: "Edge 弹窗",
     icon: ASSET + "怪物贴纸/edge_head.svg",
-    hp: 125,
-    speed: .18,
-    damage: 12,
-    attackRate: 1500,
+    hp: 62,
+    speed: 66,
+    damage: 8,
+    xp: 10,
     tag: "default"
   },
   teams: {
-    name: "Teams 会议怪",
+    name: "Teams 会议",
     icon: ASSET + "怪物贴纸/teams_head.svg",
-    hp: 145,
-    speed: .13,
+    hp: 78,
+    speed: 44,
     damage: 13,
-    attackRate: 1200,
-    tag: "meeting"
+    xp: 12,
+    tag: "muted"
   },
   onedrive: {
-    name: "OneDrive 同步怪",
+    name: "OneDrive 冲突",
     icon: ASSET + "怪物贴纸/onedrive_head.svg",
-    hp: 85,
-    speed: .18,
-    damage: 13,
-    attackRate: 1050,
-    tag: "sync"
+    hp: 54,
+    speed: 58,
+    damage: 9,
+    xp: 9,
+    tag: "copy"
+  },
+  npmhell: {
+    name: "npm 黑洞",
+    icon: ASSET + "怪物贴纸/npm_hell_head.svg",
+    hp: 96,
+    speed: 34,
+    damage: 15,
+    xp: 16,
+    tag: "deps"
+  },
+  defender: {
+    name: "Defender 误杀",
+    icon: ASSET + "怪物贴纸/defender_quarantine_head.svg",
+    hp: 72,
+    speed: 62,
+    damage: 12,
+    xp: 13,
+    tag: "block"
+  },
+  yaml: {
+    name: "YAML 缩进",
+    icon: ASSET + "怪物贴纸/yaml_indent_head.svg",
+    hp: 58,
+    speed: 74,
+    damage: 9,
+    xp: 11,
+    tag: "indent"
+  },
+  requirement: {
+    name: "需求变更",
+    icon: ASSET + "怪物贴纸/requirement_change_head.svg",
+    hp: 135,
+    speed: 36,
+    damage: 18,
+    xp: 22,
+    tag: "change"
   },
   boss: {
-    name: "蓝屏巨人",
+    name: "蓝屏合并冲突",
     icon: ASSET + "怪物贴纸/bsod_head.svg",
-    hp: 920,
-    speed: .07,
-    damage: 28,
-    attackRate: 1050,
+    hp: 1100,
+    speed: 28,
+    damage: 24,
+    xp: 80,
     tag: "BSOD",
     boss: true
   }
 };
 
-const waves = [
-  [
-    { kind: "update", row: 1, delay: 500 },
-    { kind: "update", row: 3, delay: 1800 },
-    { kind: "update", row: 5, delay: 3300 },
-    { kind: "update", row: 0, delay: 4700 }
-  ],
-  [
-    { kind: "restart", row: 2, delay: 400 },
-    { kind: "update", row: 6, delay: 1200 },
-    { kind: "update", row: 4, delay: 2400 },
-    { kind: "restart", row: 0, delay: 4200 },
-    { kind: "update", row: 1, delay: 5600 }
-  ],
-  [
-    { kind: "edge", row: 1, delay: 500 },
-    { kind: "update", row: 2, delay: 1600 },
-    { kind: "edge", row: 6, delay: 3400 },
-    { kind: "update", row: 0, delay: 4400 },
-    { kind: "restart", row: 5, delay: 5800 }
-  ],
-  [
-    { kind: "teams", row: 2, delay: 500 },
-    { kind: "onedrive", row: 3, delay: 1600 },
-    { kind: "onedrive", row: 1, delay: 2800 },
-    { kind: "restart", row: 6, delay: 4200 },
-    { kind: "teams", row: 4, delay: 5600 },
-    { kind: "update", row: 0, delay: 6900 }
-  ],
-  [
-    { kind: "boss", row: 3, delay: 600 },
-    { kind: "restart", row: 0, delay: 1800 },
-    { kind: "update", row: 6, delay: 3000 },
-    { kind: "teams", row: 1, delay: 5200 },
-    { kind: "onedrive", row: 5, delay: 6500 },
-    { kind: "edge", row: 2, delay: 7800 },
-    { kind: "restart", row: 4, delay: 9000 }
-  ]
-];
-
-const state = {
-  coffee: 175,
-  memory: 70,
-  lives: ROWS,
-  wave: 0,
-  running: false,
-  paused: false,
-  selected: null,
-  selectedKind: null,
-  plants: Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => null)),
-  enemies: [],
-  bullets: [],
-  effects: [],
-  pendingSpawns: [],
-  lastTime: 0,
-  enemyId: 1,
-  bulletId: 1,
-  updateProgress: 0,
-  waveActive: false,
-  gameOver: false,
-  files: protectedFiles.map(file => ({ ...file, deleted: false, hits: 0, lastEnemy: "" })),
-  functionExpression: "sin(x + t) * 0.33",
-  functionLabel: "sin(x + t) * 0.33",
-  functionFn: (x, t) => Math.sin(x + t) * .33
+const weaponDefs = {
+  print: {
+    name: "print 炮",
+    icon: ASSET + "植物与代码图标/plant_print_cannon.svg",
+    text: "自动喷出字符弹，最稳定的主武器。"
+  },
+  coffee: {
+    name: "coffee 机",
+    icon: ASSET + "植物与代码图标/plant_coffee_machine.svg",
+    text: "提高 coffee 掉落收益，并缓慢回血。"
+  },
+  bug: {
+    name: "bug 雷",
+    icon: ASSET + "植物与代码图标/plant_bug_mine.svg",
+    text: "周期性丢出高伤害 bug 雷。"
+  },
+  rollback: {
+    name: "rollback",
+    icon: ASSET + "植物与代码图标/plant_rollback.svg",
+    text: "定期释放回滚脉冲，推开附近事故。"
+  },
+  function: {
+    name: "函数炮",
+    icon: ASSET + "植物与代码图标/plant_function_cannon.svg",
+    text: "发射按曲线飞行的函数弹。"
+  },
+  docker: {
+    name: "Docker",
+    icon: ASSET + "植物与代码图标/devicon_docker_original.svg",
+    text: "生成容器护盾，撞到敌人会造成伤害。"
+  },
+  typescript: {
+    name: "TypeScript",
+    icon: ASSET + "植物与代码图标/devicon_typescript_original.svg",
+    text: "锁定高威胁目标，发射类型检查蓝弹。"
+  },
+  javascript: {
+    name: "JavaScript",
+    icon: ASSET + "植物与代码图标/devicon_javascript_original.svg",
+    text: "高频热修复飞镖，射速快但略微随机。"
+  },
+  python: {
+    name: "Python",
+    icon: ASSET + "植物与代码图标/plant_python_tool.svg",
+    text: "自动化脚本扫场，对成群敌人很好用。"
+  },
+  idea: {
+    name: "IDEA",
+    icon: ASSET + "植物与代码图标/plant_idea_tool.svg",
+    text: "重构激光优先打最硬的敌人。"
+  },
+  tomcat: {
+    name: "Tomcat",
+    icon: ASSET + "植物与代码图标/plant_tomcat_tool.svg",
+    text: "喷出 8080 火球，压制正面事故。"
+  },
+  springboot: {
+    name: "Spring Boot",
+    icon: ASSET + "植物与代码图标/plant_springboot_tool.svg",
+    text: "健康检查光环，持续恢复并清掉小伤害。"
+  }
 };
 
-const board = document.getElementById("board");
-const actorLayer = document.getElementById("actorLayer");
-const rowLabels = document.getElementById("rowLabels");
-const plantCards = document.getElementById("plantCards");
-const moduleCards = document.getElementById("moduleCards");
+const cardDefs = {
+  ctrlS: {
+    name: "Ctrl+S",
+    icon: ASSET + "战斗地点_VSCode/devicon_vscode_original.svg",
+    type: "闪",
+    cost: 18,
+    text: "保存冲击波，击退并伤害周围敌人"
+  },
+  kill9: {
+    name: "kill -9",
+    icon: ASSET + "植物与代码图标/simpleicons_git.svg",
+    type: "杀",
+    cost: 28,
+    text: "强制终止最危险的事故进程"
+  },
+  stackoverflow: {
+    name: "Stack Overflow",
+    icon: ASSET + "植物与代码图标/simpleicons_stackoverflow.svg",
+    type: "锦囊",
+    cost: 22,
+    text: "全屏答案弹幕，但会招来隐藏 bug"
+  },
+  stash: {
+    name: "Git Stash",
+    icon: ASSET + "植物与代码图标/devicon_git_original.svg",
+    type: "锦囊",
+    cost: 20,
+    text: "短暂无敌，并保护一个受损文件"
+  },
+  dockerBuild: {
+    name: "Docker Build",
+    icon: ASSET + "植物与代码图标/devicon_docker_original.svg",
+    type: "装备",
+    cost: 24,
+    text: "立刻获得容器护盾"
+  },
+  hotCoffee: {
+    name: "热咖啡",
+    icon: ASSET + "植物与代码图标/simpleicons_coffeescript.svg",
+    type: "桃",
+    cost: 10,
+    text: "回血并获得 coffee"
+  },
+  ci: {
+    name: "CI Pipeline",
+    icon: ASSET + "植物与代码图标/simpleicons_github.svg",
+    type: "延时锦囊",
+    cost: 30,
+    text: "3 秒后全屏扫描小怪"
+  },
+  altF4: {
+    name: "Alt+F4",
+    icon: ASSET + "系统UI梗图/restart_prompt_mock.svg",
+    type: "闪",
+    cost: 18,
+    text: "关闭全部弹窗并打断 Edge"
+  }
+};
+
+const arena = document.getElementById("arena");
+const arenaLayer = document.getElementById("arenaLayer");
+const playerEl = document.getElementById("player");
+const playerWeapons = document.getElementById("playerWeapons");
+const fileList = document.getElementById("fileList");
 const logEl = document.getElementById("log");
-const fileTree = document.getElementById("fileTree");
-const protectedList = document.getElementById("protectedList");
+const cardHand = document.getElementById("cardHand");
+const drawCardBtn = document.getElementById("drawCardBtn");
+const upgradeOverlay = document.getElementById("upgradeOverlay");
+const upgradeChoices = document.getElementById("upgradeChoices");
 const incidentModal = document.getElementById("incidentModal");
 const fakeDeleteList = document.getElementById("fakeDeleteList");
-const functionInput = document.getElementById("functionInput");
-const formulaValue = document.getElementById("formulaValue");
 
-function cellX(col) {
-  return col * (CELL_W + GAP) + CELL_W / 2;
+const state = {
+  running: false,
+  paused: false,
+  gameOver: false,
+  upgrading: false,
+  elapsed: 0,
+  lastTime: 0,
+  width: 800,
+  height: 420,
+  coffee: 35,
+  level: 1,
+  xp: 0,
+  xpNeed: 55,
+  player: {
+    x: 400,
+    y: 220,
+    hp: 100,
+    maxHp: 100,
+    speed: 250,
+    invulnUntil: 0,
+    shieldUntil: 0
+  },
+  keys: new Set(),
+  enemies: [],
+  projectiles: [],
+  pickups: [],
+  effects: [],
+  mines: [],
+  popups: [],
+  delayed: [],
+  hand: [],
+  files: [],
+  weapons: {},
+  timers: {},
+  enemyId: 1,
+  projectileId: 1,
+  pickupId: 1,
+  cardId: 1,
+  bossSpawned: false,
+  spawnTimer: 0,
+  popupTimer: 12,
+  nextIncident: "Windows 更新",
+  skillCooldowns: {
+    save: 0,
+    kill: 0,
+    close: 0
+  },
+  uiTimer: 0
+};
+
+function resetGame() {
+  updateArenaSize();
+  state.running = false;
+  state.paused = false;
+  state.gameOver = false;
+  state.upgrading = false;
+  state.elapsed = 0;
+  state.lastTime = performance.now();
+  state.coffee = 35;
+  state.level = 1;
+  state.xp = 0;
+  state.xpNeed = 55;
+  state.player = {
+    x: state.width / 2,
+    y: state.height / 2,
+    hp: 100,
+    maxHp: 100,
+    speed: 250,
+    invulnUntil: 0,
+    shieldUntil: 0
+  };
+  state.keys.clear();
+  state.enemies = [];
+  state.projectiles = [];
+  state.pickups = [];
+  state.effects = [];
+  state.mines = [];
+  state.popups = [];
+  state.delayed = [];
+  state.hand = [];
+  state.files = protectedFiles.map(file => ({ ...file, hp: file.maxHp, deleted: false, lastHit: "" }));
+  state.weapons = { print: 1 };
+  state.timers = {};
+  state.enemyId = 1;
+  state.projectileId = 1;
+  state.pickupId = 1;
+  state.cardId = 1;
+  state.bossSpawned = false;
+  state.spawnTimer = 0;
+  state.popupTimer = 10;
+  state.nextIncident = "Windows 更新";
+  state.skillCooldowns = { save: 0, kill: 0, close: 0 };
+  state.uiTimer = 0;
+  logEl.innerHTML = "";
+  upgradeOverlay.classList.remove("show");
+  incidentModal.classList.remove("show");
+  addLog("VS Code 图标已经进入编辑器战场。");
+  addLog("植物现在是武器：print 炮会自动开火，升级时可以解锁更多程序员武器。", "good");
+  drawCard(false);
+  drawCard(false);
+  renderAll();
 }
 
-function cellY(row) {
-  return row * (CELL_H + GAP) + CELL_H / 2;
+function startGame() {
+  if (state.gameOver) resetGame();
+  state.keys.clear();
+  state.running = true;
+  state.paused = false;
+  state.lastTime = performance.now();
+  arena.focus();
+  addLog("桌面幸存者模式启动。别让微软事故把工作区盖满。", "good");
+  renderAll();
+}
+
+function togglePause() {
+  if (!state.running || state.gameOver || state.upgrading) return;
+  state.paused = !state.paused;
+  addLog(state.paused ? "暂停：老板路过，窗口先假装很正经。" : "继续：弹窗又活了。");
+  renderAll();
+}
+
+function updateArenaSize() {
+  const rect = arena.getBoundingClientRect();
+  state.width = Math.max(520, rect.width || 800);
+  state.height = Math.max(300, rect.height || 420);
 }
 
 function addLog(text, type = "") {
@@ -266,467 +368,564 @@ function addLog(text, type = "") {
   while (logEl.children.length > 90) logEl.removeChild(logEl.firstChild);
 }
 
-function moneyText(def) {
-  const parts = [];
-  if (def.coffee) parts.push(`${def.coffee} coffee`);
-  if (def.memory) parts.push(`${def.memory} memory`);
-  return parts.join(" / ") || "free";
-}
-
-function createCards() {
-  plantCards.innerHTML = "";
-  Object.entries(plantDefs).forEach(([key, def]) => {
-    plantCards.appendChild(createCard(key, def));
-  });
-  moduleCards.innerHTML = "";
-  Object.entries(moduleDefs).forEach(([key, def]) => {
-    moduleCards.appendChild(createCard(key, def));
-  });
-}
-
-function createCard(key, def) {
-  const button = document.createElement("button");
-  button.className = "card";
-  button.dataset.key = key;
-  button.dataset.kind = def.type;
-  button.innerHTML = `
-    <img src="${def.icon}" alt="" />
-    <div class="card-name">${def.name}<br><span style="color:#858585;font-weight:400">${def.text}</span></div>
-    <div class="card-cost">${moneyText(def)}</div>
-  `;
-  button.addEventListener("click", () => {
-    if (!canPay(def)) {
-      addLog(`${def.name} 资源不足：还需要 ${resourceShortage(def)}。`, "warn");
-      updateUI();
-      return;
-    }
-    state.selected = key;
-    state.selectedKind = def.type;
-    addLog(def.type === "module"
-      ? `已选择 ${def.name} 模块，请点击一个已有代码植物来挂载。`
-      : `已选择 ${def.name}，请点击左侧可部署格子。`);
-    updateUI();
-  });
-  return button;
-}
-
-function createBoard() {
-  rowLabels.innerHTML = "";
-  rowNames.forEach((name, index) => {
-    const label = document.createElement("div");
-    label.className = "row-label";
-    label.dataset.row = index;
-    label.textContent = name;
-    rowLabels.appendChild(label);
-  });
-
-  board.innerHTML = "";
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      const cell = document.createElement("div");
-      cell.className = `cell ${c < BUILD_COLS ? "buildable" : "enemy-zone"}`;
-      cell.dataset.row = r;
-      cell.dataset.col = c;
-      cell.dataset.line = `${String(r + 1).padStart(2, "0")}:${String(c + 1).padStart(2, "0")}`;
-      cell.addEventListener("click", () => handleCellClick(r, c));
-      board.appendChild(cell);
-    }
+function drawCard(announce = true) {
+  if (state.hand.length >= MAX_HAND) {
+    if (announce) addLog("锦囊手牌已满，先丢出去一张再抽。", "warn");
+    return false;
   }
+  const keys = Object.keys(cardDefs);
+  const key = keys[Math.floor(Math.random() * keys.length)];
+  state.hand.push({ id: state.cardId++, key });
+  if (announce) addLog(`摸到锦囊：${cardDefs[key].name}。`);
+  renderHand();
+  return true;
 }
 
-function canPay(def) {
-  return state.coffee >= (def.coffee || 0) && state.memory >= (def.memory || 0);
-}
-
-function resourceShortage(def) {
-  const missing = [];
-  const coffee = Math.max(0, (def.coffee || 0) - state.coffee);
-  const memory = Math.max(0, (def.memory || 0) - state.memory);
-  if (coffee) missing.push(`${Math.ceil(coffee)} coffee`);
-  if (memory) missing.push(`${Math.ceil(memory)} memory`);
-  return missing.join(" / ") || "0";
-}
-
-function pay(def) {
-  state.coffee -= def.coffee || 0;
-  state.memory -= def.memory || 0;
-}
-
-function handleCellClick(row, col) {
-  if (!state.selected || state.gameOver) return;
-  const key = state.selected;
-  if (state.selectedKind === "plant") {
-    const def = plantDefs[key];
-    if (col >= BUILD_COLS) {
-      addLog("敌人生成区拒绝了你的种植请求。", "warn");
-      return;
-    }
-    if (state.plants[row][col]) {
-      addLog("这个格子已经有代码植物了。", "warn");
-      return;
-    }
-    if (!canPay(def)) return;
-    pay(def);
-    state.plants[row][col] = {
-      key,
-      row,
-      col,
-      hp: def.hp,
-      maxHp: def.hp,
-      modules: [],
-      lastAction: 0,
-      stunnedUntil: 0,
-      guardReady: true,
-      modulePulseUntil: 0
-    };
-    addLog(`${def.name} 已部署到 ${rowNames[row]} 第 ${col + 1} 列。`, "good");
-  } else {
-    const def = moduleDefs[key];
-    const plant = state.plants[row][col];
-    if (!plant) {
-      addLog("模块没有找到可以挂载的基础植物。", "warn");
-      return;
-    }
-    if (plant.modules.length >= 2) {
-      addLog(`${plantDefs[plant.key].name} 的模块槽已满。`, "warn");
-      return;
-    }
-    if (plant.modules.includes(key)) {
-      addLog("同一个模块已经挂上去了。", "warn");
-      return;
-    }
-    if (!canPay(def)) return;
-    pay(def);
-    plant.modules.push(key);
-    plant.modulePulseUntil = performance.now() + 900;
-    addEffect(row, col, "blast");
-    addLog(`${plantDefs[plant.key].name} 挂载 ${def.name} 模块：${moduleEffectText(plant, key)}`, "good");
+function buyCard() {
+  if (state.coffee < DRAW_CARD_COST) {
+    addLog(`抽卡需要 ${DRAW_CARD_COST} coffee，还差 ${DRAW_CARD_COST - state.coffee}。`, "warn");
+    return;
   }
-  updateUI();
-  renderPlants();
+  state.coffee -= DRAW_CARD_COST;
+  drawCard(true);
+  renderAll();
 }
 
-function startGame() {
-  if (state.gameOver) resetGame();
-  state.running = true;
-  state.paused = false;
-  if (!state.waveActive && state.wave === 0 && state.enemies.length === 0) startNextWave();
-  if (!state.waveActive && state.wave > 0 && state.wave < waves.length && state.enemies.length === 0) startNextWave();
-  addLog("防线启动。main 分支进入保护状态。", "good");
-  updateUI();
+function playCard(id) {
+  if (state.gameOver || state.upgrading) return;
+  const card = state.hand.find(item => item.id === id);
+  if (!card) return;
+  const def = cardDefs[card.key];
+  if (state.coffee < def.cost) {
+    addLog(`${def.name} 需要 ${def.cost} coffee 才能打出。`, "warn");
+    return;
+  }
+  state.coffee -= def.cost;
+  resolveCard(card.key);
+  state.hand = state.hand.filter(item => item.id !== id);
+  renderAll();
 }
 
-function togglePause() {
-  if (!state.running) return;
-  state.paused = !state.paused;
-  addLog(state.paused ? "时间暂停，所有进程假装自己很忙。" : "进程恢复，敌人继续靠近。");
-  if (!state.paused && !state.waveActive && state.wave > 0 && state.wave < waves.length && state.enemies.length === 0) startNextWave();
-  updateUI();
-}
-
-function resetGame() {
-  state.coffee = 175;
-  state.memory = 70;
-  state.lives = ROWS;
-  state.wave = 0;
-  state.running = false;
-  state.paused = false;
-  state.selected = null;
-  state.selectedKind = null;
-  state.plants = Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => null));
-  state.enemies = [];
-  state.bullets = [];
-  state.effects = [];
-  state.pendingSpawns = [];
-  state.lastTime = performance.now();
-  state.enemyId = 1;
-  state.bulletId = 1;
-  state.updateProgress = 0;
-  state.waveActive = false;
-  state.gameOver = false;
-  state.files = protectedFiles.map(file => ({ ...file, deleted: false, hits: 0, lastEnemy: "" }));
-  applyFunctionExpression(functionInput.value, false);
-  logEl.innerHTML = "";
-  incidentModal.classList.remove("show");
-  addLog("VS Code 工作区已重新打开。");
-  addLog("请在编辑器战场中守护这些文件，敌人突破只会触发界面里的假删除。");
-  renderPlants();
-  renderActors();
-  updateUI();
-}
-
-function startNextWave() {
-  if (state.wave >= waves.length) return;
-  state.wave += 1;
-  state.waveActive = true;
+function resolveCard(key) {
   const now = performance.now();
-  state.pendingSpawns = waves[state.wave - 1].map(spawn => ({ ...spawn, at: now + spawn.delay }));
-  addLog(`第 ${state.wave} 波开始。${waveName(state.wave)} 正在接近。`, "warn");
-  updateNextWave();
+  if (key === "ctrlS") {
+    savePulse(170, 82);
+    state.player.invulnUntil = Math.max(state.player.invulnUntil, now + 900);
+    addLog("Ctrl+S 保存冲击波扩散：附近事故被推开。", "good");
+  }
+  if (key === "kill9") {
+    killDangerEnemy();
+  }
+  if (key === "stackoverflow") {
+    for (let i = 0; i < 18; i++) {
+      const angle = Math.PI * 2 * i / 18;
+      spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 220, 38, "SO", "function");
+    }
+    spawnEnemy("yaml");
+    addLog("Stack Overflow 高赞答案全屏飞出，但顺手带来了一个隐藏缩进问题。", "warn");
+  }
+  if (key === "stash") {
+    state.player.invulnUntil = Math.max(state.player.invulnUntil, now + 2600);
+    healWorstFile(28);
+    addEffect(state.player.x, state.player.y, "save");
+    addLog("Git Stash 把当前混乱暂存了：短暂无敌，并恢复最危险文件。", "good");
+  }
+  if (key === "dockerBuild") {
+    state.player.shieldUntil = Math.max(state.player.shieldUntil, now + 6500);
+    unlockOrLevelWeapon("docker");
+    addLog("Docker Build 完成：VS Code 套上容器护盾。", "good");
+  }
+  if (key === "hotCoffee") {
+    state.player.hp = Math.min(state.player.maxHp, state.player.hp + 26);
+    gainCoffee(24, false);
+    addLog("热咖啡入口：回血并提神。", "good");
+  }
+  if (key === "ci") {
+    state.delayed.push({ type: "ci", at: now + 3000 });
+    addLog("CI Pipeline 已排队，3 秒后全屏扫描小怪。");
+  }
+  if (key === "altF4") {
+    closePopups();
+  }
 }
 
-function waveName(num) {
-  return ["首次更新", "稍后提醒我", "默认浏览器争夺", "会议和同步", "蓝屏降临"][num - 1] || "未知波次";
-}
-
-function spawnEnemy(kind, row, col = COLS - 0.25, copy = false) {
-  const def = enemyDefs[kind];
-  state.enemies.push({
-    id: state.enemyId++,
-    kind,
-    row,
-    col,
-    hp: copy ? Math.round(def.hp * .45) : def.hp,
-    maxHp: copy ? Math.round(def.hp * .45) : def.hp,
-    lastAttack: 0,
-    lastSkill: 0,
-    usedSkill: false,
-    copied: false,
-    stoppedUntil: 0,
-    copy
+function renderHand() {
+  cardHand.innerHTML = state.hand.map(card => {
+    const def = cardDefs[card.key];
+    return `
+      <button class="hand-card" data-id="${card.id}">
+        <span class="card-type">${def.type}</span>
+        <img src="${def.icon}" alt="" />
+        <span class="hand-name">${def.name}</span>
+        <span class="hand-text">${def.text}</span>
+        <span class="hand-cost">${def.cost} coffee</span>
+      </button>
+    `;
+  }).join("");
+  cardHand.querySelectorAll(".hand-card").forEach(button => {
+    button.addEventListener("click", () => playCard(Number(button.dataset.id)));
   });
-  addLog(`${copy ? "冲突副本" : def.name} 正在尝试删除 ${state.files[row].path}。`);
 }
 
 function tick(time) {
   requestAnimationFrame(tick);
-  if (!state.lastTime) state.lastTime = time;
+  updateArenaSize();
   const dt = Math.min((time - state.lastTime) / 1000, .05);
   state.lastTime = time;
-  if (!state.running || state.paused || state.gameOver) return;
+  if (!state.running || state.paused || state.gameOver || state.upgrading) {
+    renderActors();
+    return;
+  }
 
-  handleSpawns(time);
-  updatePlants(time, dt);
-  updateEnemies(time, dt);
-  updateBullets(time, dt);
+  state.elapsed += dt;
+  updateCooldowns(dt);
+  updatePlayer(dt);
+  updateSpawns(dt);
+  updateWeapons(dt, time);
+  updateProjectiles(dt);
+  updateEnemies(dt, time);
+  updateMines();
+  updatePickups(dt);
+  updatePopups(dt);
+  updateDelayed(time);
   updateEffects(time);
-  checkWaveEnd();
-  renderPlants();
+  checkBoss(time);
   renderActors();
-  updateUI();
-}
-
-function handleSpawns(time) {
-  const ready = state.pendingSpawns.filter(spawn => spawn.at <= time);
-  state.pendingSpawns = state.pendingSpawns.filter(spawn => spawn.at > time);
-  ready.forEach(spawn => spawnEnemy(spawn.kind, spawn.row));
-}
-
-function updatePlants(time) {
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      const plant = state.plants[r][c];
-      if (!plant || plant.stunnedUntil > time) continue;
-      if (plant.key === "coffee") handleCoffee(plant, time);
-      if (plant.key === "print") handlePrint(plant, time);
-      if (plant.key === "rollback") handleRollback(plant, time);
-      if (plant.key === "function") handleFunctionCannon(plant, time);
-    }
+  state.uiTimer -= dt;
+  if (state.uiTimer <= 0) {
+    state.uiTimer = .12;
+    renderRuntimePanels();
   }
 }
 
-function hasModule(plant, key) {
-  return plant.modules.includes(key);
+function updateCooldowns(dt) {
+  Object.keys(state.skillCooldowns).forEach(key => {
+    state.skillCooldowns[key] = Math.max(0, state.skillCooldowns[key] - dt);
+  });
 }
 
-function moduleEffectText(plant, key) {
-  const plantName = plantDefs[plant.key].name;
-  if (plant.key === "print" && key === "for") return "print + for 已生效，下一次攻击会连发 3 颗字符弹。";
-  if (plant.key === "print" && key === "if") return "print + if 已生效，会优先瞄准快怪、精英怪和 Boss。";
-  if (plant.key === "print" && key === "trycatch") return "print + try-catch 已生效，可以抵消一次停火或重启。";
-  if (plant.key === "wall" && key === "else") return "if + else 已生效，墙破时会触发一次备用反击。";
-  if (plant.key === "bug" && key === "rollback") return "bug + rollback 已生效，爆炸会额外击退敌人。";
-  if (plant.key === "rollback" && key === "if") return "rollback + if 已生效，会优先回滚更危险的敌人。";
-  if (key === "for") return `${plantName} 的触发频率提高。`;
-  if (key === "if") return `${plantName} 获得条件判断，目标选择更聪明。`;
-  if (key === "else") return `${plantName} 获得备用分支。`;
-  if (key === "trycatch") return `${plantName} 获得一次异常保险。`;
-  return `${plantName} 的行为已更新。`;
+function updatePlayer(dt) {
+  let dx = 0;
+  let dy = 0;
+  if (state.keys.has("arrowleft") || state.keys.has("a")) dx -= 1;
+  if (state.keys.has("arrowright") || state.keys.has("d")) dx += 1;
+  if (state.keys.has("arrowup") || state.keys.has("w")) dy -= 1;
+  if (state.keys.has("arrowdown") || state.keys.has("s")) dy += 1;
+  const len = Math.hypot(dx, dy) || 1;
+  const slow = state.popups.length ? .92 : 1;
+  state.player.x = clamp(state.player.x + dx / len * state.player.speed * slow * dt, 28, state.width - 28);
+  state.player.y = clamp(state.player.y + dy / len * state.player.speed * slow * dt, 28, state.height - 28);
 }
 
-function handleCoffee(plant, time) {
-  const interval = hasModule(plant, "for") ? 5200 : 7600;
-  if (time - plant.lastAction < interval) return;
-  plant.lastAction = time;
-  const gain = hasModule(plant, "for") ? 40 : 25;
-  state.coffee = Math.min(999, state.coffee + gain);
-  addLog(`coffee 机产出 ${gain} coffee。`);
+function normalizeInputKey(event) {
+  const codeMap = {
+    ArrowLeft: "arrowleft",
+    ArrowRight: "arrowright",
+    ArrowUp: "arrowup",
+    ArrowDown: "arrowdown",
+    KeyA: "a",
+    KeyD: "d",
+    KeyW: "w",
+    KeyS: "s",
+    Space: " "
+  };
+  return codeMap[event.code] || event.key.toLowerCase();
 }
 
-function handlePrint(plant, time) {
-  const interval = hasModule(plant, "for") ? 1450 : 1850;
-  if (time - plant.lastAction < interval) return;
-  const target = chooseRowTarget(plant.row, hasModule(plant, "if"));
+function updateSpawns(dt) {
+  const pressure = Math.min(1.8, 1 + state.elapsed / 180);
+  state.spawnTimer -= dt;
+  if (state.spawnTimer <= 0) {
+    const count = state.elapsed > 110 ? 2 : 1;
+    for (let i = 0; i < count; i++) spawnEnemy(pickEnemyKind());
+    state.spawnTimer = Math.max(.55, 1.75 / pressure);
+  }
+  state.popupTimer -= dt;
+  if (state.popupTimer <= 0) {
+    spawnPopup();
+    state.popupTimer = Math.max(9, 20 - state.elapsed / 14);
+  }
+}
+
+function pickEnemyKind() {
+  const t = state.elapsed;
+  const pool = ["update", "edge", "teams", "onedrive"];
+  if (t > 25) pool.push("yaml", "defender");
+  if (t > 50) pool.push("npmhell", "yaml", "edge");
+  if (t > 85) pool.push("requirement", "defender", "onedrive");
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function spawnEnemy(kind, x = null, y = null) {
+  const def = enemyDefs[kind];
+  const pos = x === null ? randomEdgePosition() : { x, y };
+  const scale = 1 + Math.min(.8, state.elapsed / 260);
+  state.enemies.push({
+    id: state.enemyId++,
+    kind,
+    x: pos.x,
+    y: pos.y,
+    hp: Math.round(def.hp * scale),
+    maxHp: Math.round(def.hp * scale),
+    speed: def.speed * (kind === "boss" ? 1 : 1 + Math.min(.22, state.elapsed / 500)),
+    damage: def.damage,
+    hitCooldown: 0,
+    skillTimer: 0,
+    copied: false,
+    boss: Boolean(def.boss)
+  });
+}
+
+function randomEdgePosition() {
+  const side = Math.floor(Math.random() * 4);
+  if (side === 0) return { x: -30, y: Math.random() * state.height };
+  if (side === 1) return { x: state.width + 30, y: Math.random() * state.height };
+  if (side === 2) return { x: Math.random() * state.width, y: -30 };
+  return { x: Math.random() * state.width, y: state.height + 30 };
+}
+
+function updateWeapons(dt, time) {
+  handlePrint(dt);
+  handleJavaScript(dt);
+  handleTypeScript(dt);
+  handleDocker(dt, time);
+  handleCoffee(dt);
+  handleBug(dt);
+  handleRollback(dt);
+  handleFunction(dt, time);
+  handlePython(dt);
+  handleIdea(dt);
+  handleTomcat(dt);
+  handleSpringBoot(dt);
+}
+
+function weaponLevel(key) {
+  return state.weapons[key] || 0;
+}
+
+function tickTimer(name, dt, interval) {
+  state.timers[name] = (state.timers[name] || 0) - dt;
+  if (state.timers[name] > 0) return false;
+  state.timers[name] = interval;
+  return true;
+}
+
+function handlePrint(dt) {
+  const level = weaponLevel("print");
+  if (!level) return;
+  const interval = Math.max(.42, .95 - level * .08);
+  if (!tickTimer("print", dt, interval)) return;
+  const target = nearestEnemy();
+  const angle = target ? Math.atan2(target.y - state.player.y, target.x - state.player.x) : -Math.PI / 2;
+  for (let i = 0; i < Math.min(4, level); i++) {
+    const spread = (i - (Math.min(4, level) - 1) / 2) * .13;
+    spawnProjectile(state.player.x, state.player.y, Math.cos(angle + spread), Math.sin(angle + spread), 340, 18 + level * 3, ";", "print");
+  }
+}
+
+function handleJavaScript(dt) {
+  const level = weaponLevel("javascript");
+  if (!level) return;
+  if (!tickTimer("javascript", dt, Math.max(.22, .46 - level * .035))) return;
+  const angle = Math.random() * Math.PI * 2;
+  spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 390, 10 + level * 2, "JS", "javascript");
+}
+
+function handleTypeScript(dt) {
+  const level = weaponLevel("typescript");
+  if (!level) return;
+  if (!tickTimer("typescript", dt, Math.max(.72, 1.18 - level * .07))) return;
+  const target = dangerEnemy();
   if (!target) return;
-  plant.lastAction = time;
-  const count = hasModule(plant, "for") ? 3 : 1;
-  for (let i = 0; i < count; i++) {
-    state.bullets.push({
-      id: state.bulletId++,
-      row: plant.row,
-      x: plant.col + .66 + i * .08,
-      yOffset: (i - (count - 1) / 2) * .13,
-      damage: hasModule(plant, "if") ? 30 : 24,
-      speed: 2.9 + i * .12,
-      glyph: i === 1 ? "{}" : ";"
+  const angle = Math.atan2(target.y - state.player.y, target.x - state.player.x);
+  spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 430, 28 + level * 6, "TS", "typescript", "ts");
+}
+
+function handleDocker(dt, time) {
+  const level = weaponLevel("docker");
+  if (!level) return;
+  if (state.player.shieldUntil < time && tickTimer("dockerShield", dt, Math.max(7, 12 - level))) {
+    state.player.shieldUntil = time + 2800 + level * 520;
+    addLog("Docker 容器护盾自动构建完成。");
+  }
+  if (state.player.shieldUntil > time) {
+    state.enemies.forEach(enemy => {
+      if (distance(enemy, state.player) < 72 + level * 7) {
+        enemy.hp -= (18 + level * 4) * dt;
+        pushEnemy(enemy, 80 * dt);
+      }
     });
   }
 }
 
-function chooseRowTarget(row, preferThreat) {
-  const rowEnemies = state.enemies.filter(enemy => enemy.row === row && enemy.col >= -0.2);
-  if (!rowEnemies.length) return null;
-  if (!preferThreat) return rowEnemies.sort((a, b) => a.col - b.col)[0];
-  return rowEnemies.sort((a, b) => {
-    const scoreA = enemyThreat(a);
-    const scoreB = enemyThreat(b);
-    return scoreB - scoreA || a.col - b.col;
-  })[0];
+function handleCoffee(dt) {
+  const level = weaponLevel("coffee");
+  if (!level) return;
+  if (tickTimer("coffee", dt, Math.max(5.5, 9 - level * .7))) {
+    gainCoffee(4 + level * 2, false);
+    state.player.hp = Math.min(state.player.maxHp, state.player.hp + 2 + level);
+  }
 }
 
-function enemyThreat(enemy) {
-  if (enemy.kind === "boss") return 100;
-  if (enemy.kind === "restart") return 70;
-  if (enemy.kind === "teams" || enemy.kind === "edge") return 60;
-  return enemyDefs[enemy.kind].hp / 4;
-}
-
-function handleRollback(plant, time) {
-  const interval = hasModule(plant, "for") ? 6500 : 8200;
-  if (time - plant.lastAction < interval) return;
-  const candidates = state.enemies
-    .filter(enemy => enemy.row === plant.row && enemy.col > plant.col && enemy.col < COLS - 0.1)
-    .sort((a, b) => a.col - b.col);
-  const target = hasModule(plant, "if")
-    ? candidates.find(enemy => ["boss", "teams", "edge"].includes(enemy.kind)) || candidates[0]
-    : candidates[0];
-  if (!target) return;
-  plant.lastAction = time;
-  const push = hasModule(plant, "for") ? 1.9 : 1.25;
-  target.col = Math.min(COLS - 0.1, target.col + push);
-  target.hp -= 12;
-  addEffect(plant.row, plant.col, "blast");
-  addLog(`git rollback 把 ${enemyDefs[target.kind].name} 送回了上一个版本，然后清理了自己的临时分支。`, "good");
-  state.plants[plant.row][plant.col] = null;
-}
-
-function handleFunctionCannon(plant, time) {
-  const interval = 12500;
-  if (time - plant.lastAction < interval || state.memory < 60) return;
-  const targetRow = rowWithMostEnemies();
-  if (targetRow === null) return;
-  plant.lastAction = time;
-  state.memory -= 60;
-  state.bullets.push({
-    id: state.bulletId++,
-    row: targetRow,
-    x: plant.col + .66,
-    yOffset: 0,
-    damage: 92,
-    speed: 2.2,
-    glyph: "f(x)",
-    wave: true,
-    born: time,
-    fn: state.functionFn,
-    label: state.functionLabel
+function handleBug(dt) {
+  const level = weaponLevel("bug");
+  if (!level) return;
+  if (!tickTimer("bug", dt, Math.max(3.2, 6.4 - level * .55))) return;
+  const angle = Math.random() * Math.PI * 2;
+  state.mines.push({
+    x: clamp(state.player.x + Math.cos(angle) * 62, 18, state.width - 18),
+    y: clamp(state.player.y + Math.sin(angle) * 62, 18, state.height - 18),
+    damage: 90 + level * 28,
+    radius: 48 + level * 4,
+    life: 12
   });
-  addLog(`函数炮载入 y = ${state.functionLabel}，炮弹开始按自定义函数移动。`, "good");
 }
 
-function applyFunctionExpression(rawExpression, announce = true) {
-  const expression = rawExpression.trim() || "sin(x + t) * 0.33";
-  const compiled = compileFunctionExpression(expression);
-  if (!compiled.ok) {
-    if (announce) addLog(`函数编译失败：${compiled.error}`, "bad");
-    functionInput.value = state.functionExpression;
-    return false;
-  }
-  state.functionExpression = expression;
-  state.functionLabel = expression;
-  state.functionFn = compiled.fn;
-  formulaValue.textContent = expression;
-  functionInput.value = expression;
-  if (announce) addLog(`函数炮公式已更新：y = ${expression}`, "good");
-  return true;
+function handleRollback(dt) {
+  const level = weaponLevel("rollback");
+  if (!level) return;
+  if (!tickTimer("rollback", dt, Math.max(5.8, 9.5 - level * .65))) return;
+  savePulse(128 + level * 12, 24 + level * 7, "rollback");
+  addLog("rollback 脉冲触发，事故被推回上一个版本。", "good");
 }
 
-function compileFunctionExpression(expression) {
-  const normalized = expression.replace(/\^/g, "**");
-  if (!/^[0-9a-zA-Z_xXtT+\-*/().,\s%*]+$/.test(normalized)) {
-    return { ok: false, error: "只允许数字、x、t、运算符和常用 Math 函数。" };
-  }
-  const identifiers = normalized.match(/[a-zA-Z_]+/g) || [];
-  const allowed = new Set(["x", "t", "sin", "cos", "tan", "abs", "sqrt", "pow", "min", "max", "floor", "ceil", "round", "PI", "E"]);
-  const invalid = identifiers.find(name => !allowed.has(name));
-  if (invalid) return { ok: false, error: `${invalid} 不在允许列表里。` };
-  try {
-    const fn = new Function(
-      "x",
-      "t",
-      `"use strict"; const {sin, cos, tan, abs, sqrt, pow, min, max, floor, ceil, round, PI, E} = Math; return (${normalized});`
-    );
-    const test = fn(1, 1);
-    if (!Number.isFinite(test)) return { ok: false, error: "公式结果不是有效数字。" };
-    return {
-      ok: true,
-      fn: (x, t) => {
-        const value = Number(fn(x, t));
-        if (!Number.isFinite(value)) return 0;
-        return Math.max(-.82, Math.min(.82, value));
-      }
-    };
-  } catch (error) {
-    return { ok: false, error: "公式语法不对。" };
+function handleFunction(dt, time) {
+  const level = weaponLevel("function");
+  if (!level) return;
+  if (!tickTimer("function", dt, Math.max(1.35, 2.4 - level * .16))) return;
+  const target = nearestEnemy();
+  const angle = target ? Math.atan2(target.y - state.player.y, target.x - state.player.x) : Math.random() * Math.PI * 2;
+  spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 250, 24 + level * 5, "f(x)", "function", "function");
+}
+
+function handlePython(dt) {
+  const level = weaponLevel("python");
+  if (!level) return;
+  if (!tickTimer("python", dt, Math.max(3.4, 5.8 - level * .42))) return;
+  let count = 0;
+  state.enemies.forEach(enemy => {
+    if (distance(enemy, state.player) < 185 + level * 22) {
+      enemy.hp -= 20 + level * 7;
+      count += 1;
+    }
+  });
+  if (count) {
+    addEffect(state.player.x, state.player.y, "save");
+    addLog(`Python 自动化脚本扫过战场，处理 ${count} 个事故。`);
   }
 }
 
-function rowWithMostEnemies() {
-  let bestRow = null;
-  let bestCount = 0;
-  for (let r = 0; r < ROWS; r++) {
-    const count = state.enemies.filter(enemy => enemy.row === r).length;
-    if (count > bestCount) {
-      bestCount = count;
-      bestRow = r;
+function handleIdea(dt) {
+  const level = weaponLevel("idea");
+  if (!level) return;
+  if (!tickTimer("idea", dt, Math.max(2.6, 4.8 - level * .34))) return;
+  const target = dangerEnemy();
+  if (!target) return;
+  target.hp -= 55 + level * 18;
+  addEffect(target.x, target.y);
+  addLog(`IDEA 重构激光定位 ${enemyDefs[target.kind].name}。`);
+}
+
+function handleTomcat(dt) {
+  const level = weaponLevel("tomcat");
+  if (!level) return;
+  if (!tickTimer("tomcat", dt, Math.max(.8, 1.55 - level * .09))) return;
+  const target = nearestEnemy();
+  const base = target ? Math.atan2(target.y - state.player.y, target.x - state.player.x) : 0;
+  for (let i = 0; i < Math.min(3, level); i++) {
+    const angle = base + (i - 1) * .18;
+    spawnProjectile(state.player.x, state.player.y, Math.cos(angle), Math.sin(angle), 285, 23 + level * 4, "8080", "tomcat", "git");
+  }
+}
+
+function handleSpringBoot(dt) {
+  const level = weaponLevel("springboot");
+  if (!level) return;
+  if (tickTimer("springboot", dt, Math.max(4.2, 7 - level * .42))) {
+    state.player.hp = Math.min(state.player.maxHp, state.player.hp + 6 + level * 3);
+    healWorstFile(5 + level * 2, false);
+    addEffect(state.player.x, state.player.y, "save");
+  }
+}
+
+function spawnProjectile(x, y, dx, dy, speed, damage, glyph, source, cssClass = "") {
+  const len = Math.hypot(dx, dy) || 1;
+  state.projectiles.push({
+    id: state.projectileId++,
+    x,
+    y,
+    dx: dx / len,
+    dy: dy / len,
+    speed,
+    damage,
+    glyph,
+    source,
+    cssClass,
+    life: 2.8,
+    age: 0
+  });
+}
+
+function updateProjectiles(dt) {
+  for (const projectile of [...state.projectiles]) {
+    projectile.age += dt;
+    projectile.life -= dt;
+    if (projectile.cssClass === "function") {
+      projectile.x += projectile.dx * projectile.speed * dt;
+      projectile.y += projectile.dy * projectile.speed * dt + Math.sin(projectile.age * 10) * 42 * dt;
+    } else {
+      projectile.x += projectile.dx * projectile.speed * dt;
+      projectile.y += projectile.dy * projectile.speed * dt;
+    }
+    const hit = state.enemies.find(enemy => distance(projectile, enemy) < (enemy.boss ? 48 : 31));
+    if (hit) {
+      hit.hp -= projectile.damage * counterMultiplier(projectile.source, hit.kind);
+      if (projectile.source === "typescript") hit.speed *= .985;
+      state.projectiles = state.projectiles.filter(item => item.id !== projectile.id);
+      if (hit.hp <= 0) killEnemy(hit);
+    } else if (projectile.life <= 0 || projectile.x < -60 || projectile.x > state.width + 60 || projectile.y < -60 || projectile.y > state.height + 60) {
+      state.projectiles = state.projectiles.filter(item => item.id !== projectile.id);
     }
   }
-  return bestRow;
 }
 
-function updateEnemies(time, dt) {
+function updateEnemies(dt, time) {
   for (const enemy of [...state.enemies]) {
-    const def = enemyDefs[enemy.kind];
-    useEnemySkill(enemy, time);
-    const blockingPlant = getBlockingPlant(enemy);
-    if (blockingPlant) {
-      attackPlant(enemy, blockingPlant, time);
-    } else if (enemy.stoppedUntil <= time) {
-      enemy.col -= def.speed * dt;
+    enemy.hitCooldown = Math.max(0, enemy.hitCooldown - dt);
+    enemy.skillTimer += dt;
+    const angle = Math.atan2(state.player.y - enemy.y, state.player.x - enemy.x);
+    enemy.x += Math.cos(angle) * enemy.speed * dt;
+    enemy.y += Math.sin(angle) * enemy.speed * dt;
+
+    if (enemy.kind === "onedrive" && !enemy.copied && enemy.hp < enemy.maxHp * .55) {
+      enemy.copied = true;
+      spawnEnemy("onedrive", enemy.x + 24, enemy.y - 24);
+      addLog("OneDrive 同步怪复制了一个冲突副本。", "warn");
+    }
+    if (enemy.kind === "edge" && enemy.skillTimer > 7) {
+      enemy.skillTimer = 0;
+      spawnPopup("Edge");
+    }
+    if (enemy.kind === "boss" && enemy.skillTimer > 6) {
+      enemy.skillTimer = 0;
+      spawnPopup("BSOD");
+      damageRandomFile(8, "蓝屏合并冲突");
     }
 
-    if (enemy.col < -0.45) {
-      state.enemies = state.enemies.filter(item => item.id !== enemy.id);
-      markFileDeleted(enemy.row, def.name);
-      if (remainingFiles() <= 0) loseGame();
+    if (distance(enemy, state.player) < (enemy.boss ? 54 : 34)) {
+      hitPlayer(enemy.damage, enemyDefs[enemy.kind].name);
+      pushEnemy(enemy, enemy.boss ? 28 : 80);
     }
   }
 }
 
-function markFileDeleted(row, enemyName) {
-  const file = state.files[row];
-  file.hits += 1;
-  file.lastEnemy = enemyName;
-  if (!file.deleted) {
-    file.deleted = true;
-    addEffect(row, 0, "blast");
-    addLog(`${enemyName} 突破防线：rm -rf ${file.path}`, "bad");
-    addLog(`${file.path} 在 Explorer 中被标记为 deleted。真实文件没有被删除。`, "warn");
-  } else {
-    addLog(`${enemyName} 又检查了一遍 ${file.path}，发现它已经在假删除列表里。`, "bad");
+function updateMines() {
+  for (const mine of [...state.mines]) {
+    mine.life -= .016;
+    const hit = state.enemies.find(enemy => distance(mine, enemy) < mine.radius);
+    if (hit) {
+      state.enemies.forEach(enemy => {
+        if (distance(mine, enemy) < mine.radius) {
+          enemy.hp -= mine.damage;
+          pushEnemy(enemy, 54);
+          if (enemy.hp <= 0) killEnemy(enemy);
+        }
+      });
+      addEffect(mine.x, mine.y);
+      state.mines = state.mines.filter(item => item !== mine);
+    } else if (mine.life <= 0) {
+      state.mines = state.mines.filter(item => item !== mine);
+    }
   }
-  state.lives = remainingFiles();
-  if (state.lives <= Math.ceil(ROWS / 2) && !state.gameOver) {
-    addLog("守护文件数量过半告急，建议补墙、补 rollback、给关键植物挂 try-catch。", "warn");
+}
+
+function updatePickups(dt) {
+  for (const pickup of [...state.pickups]) {
+    if (distance(pickup, state.player) < 92) {
+      const angle = Math.atan2(state.player.y - pickup.y, state.player.x - pickup.x);
+      pickup.x += Math.cos(angle) * 250 * dt;
+      pickup.y += Math.sin(angle) * 250 * dt;
+    }
+    if (distance(pickup, state.player) < 24) {
+      gainCoffee(pickup.value, true);
+      state.pickups = state.pickups.filter(item => item.id !== pickup.id);
+    }
+  }
+}
+
+function updatePopups(dt) {
+  for (const popup of [...state.popups]) {
+    popup.life -= dt;
+    if (popup.life <= 0) {
+      damageRandomFile(popup.damage, popup.title);
+      state.popups = state.popups.filter(item => item.id !== popup.id);
+      addLog(`${popup.title} 没关掉，污染了一个工作区文件。`, "bad");
+    }
+  }
+}
+
+function updateDelayed(time) {
+  const ready = state.delayed.filter(item => item.at <= time);
+  state.delayed = state.delayed.filter(item => item.at > time);
+  ready.forEach(item => {
+    if (item.type === "ci") {
+      let cleared = 0;
+      state.enemies.forEach(enemy => {
+        if (!enemy.boss && enemy.hp < 140) {
+          enemy.hp = 0;
+          cleared += 1;
+        }
+      });
+      state.enemies.filter(enemy => enemy.hp <= 0).forEach(killEnemy);
+      addEffect(state.width / 2, state.height / 2, "save");
+      addLog(`CI Pipeline 通过，全屏扫描清掉 ${cleared} 个小事故。`, cleared ? "good" : "warn");
+    }
+  });
+}
+
+function updateEffects(time) {
+  state.effects = state.effects.filter(effect => effect.until > time);
+}
+
+function checkBoss() {
+  if (!state.bossSpawned && state.elapsed > 180) {
+    state.bossSpawned = true;
+    spawnEnemy("boss");
+    addLog("蓝屏合并冲突巨人出现：屏幕开始怀疑人生。", "bad");
+  }
+  if (state.bossSpawned && !state.enemies.some(enemy => enemy.kind === "boss") && state.elapsed > 180 && !state.gameOver) {
+    winGame();
+  }
+}
+
+function hitPlayer(amount, source) {
+  const now = performance.now();
+  if (state.player.invulnUntil > now) return;
+  if (state.player.shieldUntil > now) amount *= .45;
+  state.player.hp -= Math.round(amount);
+  state.player.invulnUntil = now + 560;
+  damageRandomFile(Math.ceil(amount / 3), source, false);
+  if (state.player.hp <= 0) {
+    state.player.hp = 0;
+    loseGame("VS Code 图标被事故淹没。");
+  }
+}
+
+function damageRandomFile(amount, source, loud = true) {
+  const candidates = state.files.filter(file => !file.deleted);
+  if (!candidates.length) {
+    loseGame("所有文件都进入 already deleted。");
+    return;
+  }
+  const file = candidates[Math.floor(Math.random() * candidates.length)];
+  file.hp = Math.max(0, file.hp - amount);
+  file.lastHit = source;
+  if (file.hp <= 0 && !file.deleted) {
+    file.deleted = true;
+    addLog(`${source} 打穿 ${file.path}：already deleted。真实文件仍然安全。`, "bad");
+    if (remainingFiles() <= 0) loseGame("Explorer 全部变红。");
+  } else if (loud) {
+    addLog(`${source} 擦伤 ${file.short}，文件生命下降。`, "warn");
   }
 }
 
@@ -734,343 +933,442 @@ function remainingFiles() {
   return state.files.filter(file => !file.deleted).length;
 }
 
-function useEnemySkill(enemy, time) {
-  if (enemy.kind === "update" && !enemy.usedSkill && enemy.col < 5.4) {
-    enemy.usedSkill = true;
-    state.updateProgress = Math.min(100, state.updateProgress + 22);
-    stunRow(enemy.row, time, 900, "Windows 更新兵读条完成，本行代码植物卡顿。");
-  }
-  if (enemy.kind === "teams" && time - enemy.lastSkill > 8200 && enemy.col < 7.2) {
-    enemy.lastSkill = time;
-    stunRow(enemy.row, time, 2200, "Teams 会议怪发起会议，整行进入同步进度。");
-  }
-  if (enemy.kind === "onedrive" && !enemy.copied && enemy.col < 6.8 && !enemy.copy) {
-    enemy.copied = true;
-    spawnEnemy("onedrive", enemy.row, Math.min(COLS - 0.2, enemy.col + .35), true);
-    addLog("OneDrive 同步怪制造了一个冲突副本。", "warn");
-  }
-  if (enemy.kind === "boss" && time - enemy.lastSkill > 7400 && enemy.col < 7.5) {
-    enemy.lastSkill = time;
-    stunRow(enemy.row, time, 2600, "蓝屏巨人释放 MEMORY_MANAGEMENT。", "bad");
-  }
-}
-
-function stunRow(row, time, duration, message) {
-  let protectedCount = 0;
-  for (let c = 0; c < BUILD_COLS; c++) {
-    const plant = state.plants[row][c];
-    if (!plant) continue;
-    if (hasModule(plant, "trycatch") && plant.guardReady) {
-      plant.guardReady = false;
-      protectedCount += 1;
-      addLog(`try-catch 捕获了 ${plantDefs[plant.key].name} 的异常。`, "good");
-    } else {
-      plant.stunnedUntil = Math.max(plant.stunnedUntil, time + duration);
-    }
-  }
-  addLog(protectedCount ? `${message} ${protectedCount} 个 try-catch 保险生效。` : message, protectedCount ? "warn" : "bad");
-}
-
-function getBlockingPlant(enemy) {
-  const col = Math.floor(enemy.col);
-  if (col < 0 || col >= BUILD_COLS) return null;
-  const plant = state.plants[enemy.row][col];
-  if (!plant) return null;
-  const edge = col + .72;
-  return enemy.col <= edge ? plant : null;
-}
-
-function attackPlant(enemy, plant, time) {
-  const def = enemyDefs[enemy.kind];
-  if (time - enemy.lastAttack < def.attackRate) return;
-  enemy.lastAttack = time;
-  plant.hp -= def.damage;
-
-  if (enemy.kind === "restart") {
-    if (hasModule(plant, "trycatch") && plant.guardReady) {
-      plant.guardReady = false;
-      addLog("try-catch 捕获了一次强制重启。", "good");
-    } else {
-      plant.stunnedUntil = Math.max(plant.stunnedUntil, time + 2600);
-      addLog(`强制重启车让 ${plantDefs[plant.key].name} 进入重启中。`, "bad");
-    }
-  }
-
-  if (enemy.kind === "edge" && time - enemy.lastSkill > 3300) {
-    enemy.lastSkill = time;
-    if (hasModule(plant, "trycatch") && plant.guardReady) {
-      plant.guardReady = false;
-      addLog("try-catch 拒绝了默认浏览器修改。", "good");
-    } else {
-      plant.stunnedUntil = Math.max(plant.stunnedUntil, time + 3300);
-      addLog(`Edge 传教士正在劝说 ${plantDefs[plant.key].name}。`, "warn");
-    }
-  }
-
-  if (plant.hp <= 0) destroyPlant(plant);
-}
-
-function destroyPlant(plant) {
-  if (plant.key === "wall" && hasModule(plant, "else")) {
-    addEffect(plant.row, plant.col, "blast");
-    state.enemies
-      .filter(enemy => enemy.row === plant.row && Math.abs(enemy.col - plant.col) < 1.6)
-      .forEach(enemy => enemy.hp -= 70);
-    addLog("else 反击墙触发备用分支，附近敌人被弹开。", "good");
-  }
-  addLog(`${plantDefs[plant.key].name} 被摧毁。`, "bad");
-  state.plants[plant.row][plant.col] = null;
-}
-
-function updateBullets(time, dt) {
-  for (const bullet of [...state.bullets]) {
-    bullet.x += bullet.speed * dt;
-    if (bullet.wave) {
-      const age = (time - bullet.born) / 1000;
-      bullet.yOffset = bullet.fn ? bullet.fn(bullet.x, age * 4) : Math.sin(age * 8 + bullet.x * 1.2) * .33;
-    }
-    const hit = state.enemies.find(enemy =>
-      enemy.row === bullet.row &&
-      enemy.col <= bullet.x + .22 &&
-      enemy.col >= bullet.x - .34
-    );
-    if (hit) {
-      hit.hp -= bullet.damage;
-      state.bullets = state.bullets.filter(item => item.id !== bullet.id);
-      if (hit.hp <= 0) killEnemy(hit);
-    } else if (bullet.x > COLS + .35) {
-      state.bullets = state.bullets.filter(item => item.id !== bullet.id);
-    }
-  }
-
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < BUILD_COLS; c++) {
-      const plant = state.plants[r][c];
-      if (plant?.key === "bug") {
-        const enemy = state.enemies.find(item => item.row === r && Math.abs(item.col - c) < .42);
-        if (enemy) triggerMine(plant, enemy);
-      }
-    }
-  }
-}
-
-function triggerMine(plant, enemy) {
-  const damage = hasModule(plant, "for") ? 190 : 125;
-  enemy.hp -= damage;
-  if (hasModule(plant, "rollback")) enemy.col = Math.min(COLS - 0.2, enemy.col + 1.8);
-  addEffect(plant.row, plant.col, "blast");
-  addLog(hasModule(plant, "rollback") ? "bug 雷爆炸并触发 rollback，把敌人炸回去了。" : "bug 雷触发，错误爆炸。", "good");
-  state.plants[plant.row][plant.col] = null;
-  if (enemy.hp <= 0) killEnemy(enemy);
+function healWorstFile(amount, loud = true) {
+  const file = state.files
+    .filter(item => !item.deleted)
+    .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+  if (!file) return;
+  file.hp = Math.min(file.maxHp, file.hp + amount);
+  if (loud) addLog(`${file.path} 被恢复了一点工作区状态。`, "good");
 }
 
 function killEnemy(enemy) {
-  const def = enemyDefs[enemy.kind];
+  if (!state.enemies.includes(enemy)) return;
   state.enemies = state.enemies.filter(item => item.id !== enemy.id);
-  const memoryGain = enemy.kind === "boss" ? 80 : (["teams", "edge", "onedrive"].includes(enemy.kind) ? 12 : 6);
-  state.memory = Math.min(999, state.memory + memoryGain);
-  state.coffee = Math.min(999, state.coffee + (enemy.kind === "boss" ? 60 : 8));
-  addLog(`${def.name} 被清理。回收 ${memoryGain} memory。`, "good");
-}
-
-function addEffect(row, col, type) {
-  state.effects.push({ row, col, type, until: performance.now() + 300 });
-}
-
-function updateEffects(time) {
-  state.effects = state.effects.filter(effect => effect.until > time);
-}
-
-function checkWaveEnd() {
-  if (!state.waveActive) return;
-  if (state.pendingSpawns.length === 0 && state.enemies.length === 0) {
-    state.waveActive = false;
-    if (state.wave >= waves.length) {
-      winGame();
-    } else {
-      addLog(`第 ${state.wave} 波结束。下一波正在排队。`, "good");
-      setTimeout(() => {
-        if (state.running && !state.paused && !state.gameOver && !state.waveActive) startNextWave();
-      }, 3200);
-    }
+  const def = enemyDefs[enemy.kind];
+  const bonus = weaponLevel("coffee") ? Math.ceil(def.xp * (.25 + weaponLevel("coffee") * .08)) : 0;
+  dropCoffee(enemy.x, enemy.y, def.xp + bonus);
+  addEffect(enemy.x, enemy.y);
+  if (enemy.boss) {
+    addLog("蓝屏合并冲突被关闭。", "good");
   }
+}
+
+function dropCoffee(x, y, value) {
+  const chunks = Math.max(1, Math.min(4, Math.ceil(value / 10)));
+  for (let i = 0; i < chunks; i++) {
+    state.pickups.push({
+      id: state.pickupId++,
+      x: x + (Math.random() - .5) * 32,
+      y: y + (Math.random() - .5) * 32,
+      value: Math.ceil(value / chunks)
+    });
+  }
+}
+
+function gainCoffee(amount, countsForLevel) {
+  state.coffee = Math.min(999, state.coffee + amount);
+  if (countsForLevel) {
+    state.xp += amount;
+    if (state.xp >= state.xpNeed) levelUp();
+  }
+}
+
+function levelUp() {
+  state.xp -= state.xpNeed;
+  state.level += 1;
+  state.xpNeed = Math.round(state.xpNeed * 1.22 + 18);
+  state.upgrading = true;
+  showUpgradeChoices();
+  addLog(`coffee 经验满了，等级 ${state.level}：选择一个植物武器升级。`, "good");
+}
+
+function showUpgradeChoices() {
+  const keys = shuffle(Object.keys(weaponDefs)).slice(0, 3);
+  upgradeChoices.innerHTML = keys.map(key => {
+    const def = weaponDefs[key];
+    const level = weaponLevel(key);
+    return `
+      <button class="upgrade-card" data-key="${key}">
+        <img src="${def.icon}" alt="" />
+        <strong>${level ? `${def.name} Lv.${level + 1}` : `解锁 ${def.name}`}</strong>
+        <span>${def.text}</span>
+      </button>
+    `;
+  }).join("");
+  upgradeChoices.querySelectorAll(".upgrade-card").forEach(button => {
+    button.addEventListener("click", () => {
+      unlockOrLevelWeapon(button.dataset.key);
+      state.upgrading = false;
+      upgradeOverlay.classList.remove("show");
+      arena.focus();
+      renderAll();
+    });
+  });
+  upgradeOverlay.classList.add("show");
+}
+
+function unlockOrLevelWeapon(key) {
+  state.weapons[key] = Math.min(8, (state.weapons[key] || 0) + 1);
+  addLog(`${weaponDefs[key].name} 升到 Lv.${state.weapons[key]}。`, "good");
+}
+
+function savePulse(radius = 150, damage = 60, type = "save") {
+  state.enemies.forEach(enemy => {
+    const dist = distance(enemy, state.player);
+    if (dist < radius) {
+      enemy.hp -= damage * (1 - dist / radius * .35);
+      pushEnemy(enemy, type === "rollback" ? 145 : 92);
+      if (enemy.hp <= 0) killEnemy(enemy);
+    }
+  });
+  addEffect(state.player.x, state.player.y, type);
+}
+
+function killDangerEnemy() {
+  const target = dangerEnemy();
+  if (!target) {
+    addLog("kill -9 没找到可终止的事故进程。", "warn");
+    return;
+  }
+  target.hp -= target.boss ? 210 : 999;
+  addEffect(target.x, target.y);
+  addLog(`kill -9 终止 ${enemyDefs[target.kind].name}。`, "good");
+  if (target.hp <= 0) killEnemy(target);
+}
+
+function closePopups() {
+  const count = state.popups.length;
+  state.popups = [];
+  state.enemies.forEach(enemy => {
+    if (enemy.kind === "edge") enemy.hp -= 90;
+    if (enemy.hp <= 0) killEnemy(enemy);
+  });
+  addLog(`Alt+F4 关闭 ${count} 个弹窗，Edge 的话术被打断。`, count ? "good" : "warn");
+}
+
+function spawnPopup(forced = "") {
+  const options = [
+    { title: "Windows Update", body: "你的电脑将在 2 分钟后重启。", damage: 16 },
+    { title: "Edge", body: "要不要把默认浏览器交给我？", damage: 11 },
+    { title: "Teams", body: "你能听到我吗？", damage: 13 },
+    { title: "OneDrive", body: "正在同步 决赛版-最终版.zip。", damage: 12 },
+    { title: "BSOD", body: "CRITICAL_PROCESS_DIED", damage: 22 }
+  ];
+  const selected = forced
+    ? options.find(item => item.title === forced) || options[0]
+    : options[Math.floor(Math.random() * (state.elapsed > 120 ? options.length : options.length - 1))];
+  state.popups.push({
+    id: Math.random().toString(36).slice(2),
+    title: selected.title,
+    body: selected.body,
+    damage: selected.damage,
+    x: 100 + Math.random() * Math.max(120, state.width - 200),
+    y: 70 + Math.random() * Math.max(80, state.height - 150),
+    life: selected.title === "BSOD" ? 5 : 7
+  });
+  state.nextIncident = selected.title;
+}
+
+function counterMultiplier(source, kind) {
+  const counters = {
+    docker: ["onedrive", "defender"],
+    typescript: ["npmhell", "yaml", "requirement"],
+    javascript: ["edge", "teams", "npmhell"],
+    python: ["yaml", "npmhell", "defender"],
+    idea: ["yaml", "requirement", "npmhell"],
+    tomcat: ["update", "boss"],
+    springboot: ["requirement", "yaml", "boss"],
+    print: ["update"],
+    function: ["boss", "edge"]
+  };
+  return counters[source]?.includes(kind) ? 1.55 : 1;
+}
+
+function dangerEnemy() {
+  return [...state.enemies].sort((a, b) => {
+    const bossScore = Number(b.boss) - Number(a.boss);
+    if (bossScore) return bossScore;
+    return b.hp - a.hp || distance(a, state.player) - distance(b, state.player);
+  })[0] || null;
+}
+
+function nearestEnemy() {
+  return [...state.enemies].sort((a, b) => distance(a, state.player) - distance(b, state.player))[0] || null;
+}
+
+function pushEnemy(enemy, amount) {
+  const angle = Math.atan2(enemy.y - state.player.y, enemy.x - state.player.x);
+  enemy.x = clamp(enemy.x + Math.cos(angle) * amount, -80, state.width + 80);
+  enemy.y = clamp(enemy.y + Math.sin(angle) * amount, -80, state.height + 80);
+}
+
+function addEffect(x, y, type = "") {
+  state.effects.push({ x, y, type, until: performance.now() + 320 });
 }
 
 function winGame() {
   state.running = false;
   state.gameOver = true;
-  addLog("编译成功。工作区文件幸存。", "good");
-  addLog("你获得了 3 杯冷掉的咖啡。", "good");
-  updateUI();
+  addLog("git commit 成功：VS Code 工作区挺过了微软桌面大乱斗。", "good");
+  renderAll();
 }
 
-function loseGame() {
+function loseGame(reason) {
+  if (state.gameOver) return;
   state.running = false;
   state.gameOver = true;
-  addLog("Explorer 显示：你的代码文件被删掉了。", "bad");
+  addLog(reason, "bad");
   addLog("安全提示：这只是游戏状态，真实项目文件没有被删除。", "warn");
   showIncidentModal();
-  updateUI();
+  renderAll();
 }
 
 function showIncidentModal() {
   const deleted = state.files.filter(file => file.deleted);
   fakeDeleteList.innerHTML = deleted.map(file => (
-    `<li>deleted: ${file.path}${file.lastEnemy ? `  // by ${file.lastEnemy}` : ""}</li>`
-  )).join("") || "<li>deleted: workspace/*</li>";
+    `<li>already deleted: ${file.path}${file.lastHit ? `  // by ${file.lastHit}` : ""}</li>`
+  )).join("") || "<li>already deleted: workspace/*</li>";
   incidentModal.classList.add("show");
 }
 
-function renderPlants() {
-  document.querySelectorAll(".cell").forEach(cell => {
-    const row = Number(cell.dataset.row);
-    const col = Number(cell.dataset.col);
-    const plant = state.plants[row][col];
-    cell.querySelectorAll(".plant").forEach(node => node.remove());
-    if (!plant) return;
-    const def = plantDefs[plant.key];
-    const plantEl = document.createElement("div");
-    const now = performance.now();
-    plantEl.className = `plant ${plant.stunnedUntil > now ? "stunned" : ""} ${plant.modulePulseUntil > now ? "module-pulse" : ""}`;
-    const modules = plant.modules.map(module => {
-      const mod = moduleDefs[module];
-      return `<span class="module-badge ${module}">${mod.mark}</span>`;
-    }).join("");
-    plantEl.innerHTML = `
-      <img src="${def.icon}" alt="" />
-      <div class="module-badges">${modules}</div>
-      <div class="hpbar"><span style="width:${Math.max(0, plant.hp / plant.maxHp * 100)}%"></span></div>
+function useSaveSkill() {
+  if (state.skillCooldowns.save > 0 || state.gameOver) return;
+  state.skillCooldowns.save = 8;
+  resolveCard("ctrlS");
+  renderAll();
+}
+
+function useKillSkill() {
+  if (state.skillCooldowns.kill > 0 || state.gameOver) return;
+  state.skillCooldowns.kill = 12;
+  killDangerEnemy();
+  renderAll();
+}
+
+function useCloseSkill() {
+  if (state.skillCooldowns.close > 0 || state.gameOver) return;
+  state.skillCooldowns.close = 11;
+  closePopups();
+  renderAll();
+}
+
+function renderAll() {
+  renderFiles();
+  renderHand();
+  renderWeapons();
+  renderPlayerWeapons();
+  renderEvents();
+  renderActors();
+  updateUI();
+}
+
+function renderRuntimePanels() {
+  renderFiles();
+  renderWeapons();
+  renderPlayerWeapons();
+  renderEvents();
+  updateUI();
+}
+
+function renderFiles() {
+  fileList.innerHTML = state.files.map(file => `
+    <div class="file-card ${file.deleted ? "deleted" : ""}">
+      <div class="file-top">
+        <span class="file-icon">${file.icon}</span>
+        <span class="file-name">${file.deleted ? "already deleted" : file.short}</span>
+        <span class="file-status">${file.deleted ? "deleted" : "safe"}</span>
+      </div>
+      <div class="file-hp"><span style="width:${Math.max(0, file.hp / file.maxHp * 100)}%"></span></div>
+    </div>
+  `).join("");
+}
+
+function renderWeapons() {
+  const box = document.getElementById("weaponList");
+  box.innerHTML = Object.entries(state.weapons).map(([key, level]) => {
+    const def = weaponDefs[key];
+    return `
+      <div class="weapon-item">
+        <img src="${def.icon}" alt="" />
+        <span>${def.name}</span>
+        <strong>Lv.${level}</strong>
+      </div>
     `;
-    cell.appendChild(plantEl);
-  });
+  }).join("");
+}
+
+function renderPlayerWeapons() {
+  const entries = Object.entries(state.weapons);
+  const radius = entries.length <= 1 ? 44 : entries.length <= 4 ? 48 : 55;
+  playerWeapons.innerHTML = entries.map(([key, level], index) => {
+    const def = weaponDefs[key];
+    const angle = entries.length === 1 ? 0 : -Math.PI / 2 + Math.PI * 2 * index / entries.length;
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+    return `
+      <span class="player-weapon" title="${def.name} Lv.${level}" style="transform:translate(calc(-50% + ${x.toFixed(1)}px), calc(-50% + ${y.toFixed(1)}px))">
+        <img src="${def.icon}" alt="" />
+        <strong>${level}</strong>
+      </span>
+    `;
+  }).join("");
+}
+
+function renderEvents() {
+  const box = document.getElementById("eventList");
+  const names = [
+    state.nextIncident,
+    state.bossSpawned ? "蓝屏合并冲突" : `${Math.max(0, Math.ceil(180 - state.elapsed))}s 后 Boss`,
+    state.elapsed > 80 ? "需求变更变多" : "普通弹窗潮"
+  ];
+  box.innerHTML = names.map(name => `
+    <div class="event-item">
+      <img src="${ASSET}怪物贴纸/windows_update_head.svg" alt="" />
+      <span>${name}</span>
+      <strong>soon</strong>
+    </div>
+  `).join("");
 }
 
 function renderActors() {
-  actorLayer.innerHTML = "";
-  state.enemies.forEach(enemy => {
-    const def = enemyDefs[enemy.kind];
-    const enemyEl = document.createElement("div");
-    enemyEl.className = `enemy ${def.boss ? "boss" : ""}`;
-    enemyEl.style.left = `${cellX(enemy.col)}px`;
-    enemyEl.style.top = `${cellY(enemy.row)}px`;
-    enemyEl.innerHTML = `
-      <span class="tag">${enemy.copy ? "copy" : def.tag}</span>
-      <img src="${def.icon}" alt="" />
-      <div class="enemy-hp"><span style="width:${Math.max(0, enemy.hp / enemy.maxHp * 100)}%"></span></div>
-    `;
-    actorLayer.appendChild(enemyEl);
-  });
+  playerEl.style.left = `${state.player.x}px`;
+  playerEl.style.top = `${state.player.y}px`;
+  playerEl.style.opacity = state.player.invulnUntil > performance.now() ? ".68" : "1";
+  playerEl.style.filter = state.player.shieldUntil > performance.now()
+    ? "drop-shadow(0 0 16px rgba(43, 199, 180, .95))"
+    : "";
 
-  state.bullets.forEach(bullet => {
-    const bulletEl = document.createElement("div");
-    bulletEl.className = "bullet";
-    bulletEl.style.left = `${cellX(bullet.x)}px`;
-    bulletEl.style.top = `${cellY(bullet.row) + bullet.yOffset * CELL_H}px`;
-    bulletEl.textContent = bullet.glyph;
-    actorLayer.appendChild(bulletEl);
-  });
-
-  state.effects.forEach(effect => {
-    const el = document.createElement("div");
-    el.className = effect.type;
-    el.style.left = `${cellX(effect.col)}px`;
-    el.style.top = `${cellY(effect.row)}px`;
-    actorLayer.appendChild(el);
-  });
+  arenaLayer.innerHTML = [
+    ...state.projectiles.map(projectile => `
+      <div class="projectile ${projectile.cssClass || ""}" style="left:${projectile.x}px;top:${projectile.y}px">${projectile.glyph}</div>
+    `),
+    ...state.mines.map(mine => `
+      <div class="mine" style="left:${mine.x}px;top:${mine.y}px">bug</div>
+    `),
+    ...state.pickups.map(pickup => `
+      <div class="pickup" style="left:${pickup.x}px;top:${pickup.y}px">c</div>
+    `),
+    ...state.enemies.map(enemy => {
+      const def = enemyDefs[enemy.kind];
+      return `
+        <div class="enemy ${enemy.boss ? "boss" : ""}" style="left:${enemy.x}px;top:${enemy.y}px">
+          <span class="tag">${def.tag}</span>
+          <img src="${def.icon}" alt="" />
+          <div class="hpbar"><span style="width:${Math.max(0, enemy.hp / enemy.maxHp * 100)}%"></span></div>
+        </div>
+      `;
+    }),
+    ...state.popups.map(popup => `
+      <div class="popup-threat" data-popup-id="${popup.id}" style="left:${popup.x}px;top:${popup.y}px">
+        <div class="popup-title"><span>${popup.title}</span><span>x</span></div>
+        <p>${popup.body}</p>
+        <button>稍后提醒我</button>
+      </div>
+    `),
+    ...state.effects.map(effect => `
+      <div class="effect ${effect.type || ""}" style="left:${effect.x}px;top:${effect.y}px"></div>
+    `)
+  ].join("");
 }
 
 function updateUI() {
-  document.getElementById("coffeeValue").textContent = Math.floor(state.coffee);
-  document.getElementById("memoryValue").textContent = Math.floor(state.memory);
-  document.getElementById("waveValue").textContent = state.wave;
-  document.getElementById("livesValue").textContent = state.lives;
-  document.getElementById("guardValue").textContent = `${remainingFiles()}/${ROWS}`;
-  document.getElementById("selectedValue").textContent = state.selected ? selectedName() : "none";
-  document.getElementById("stateValue").textContent = state.gameOver ? "done" : state.paused ? "paused" : state.running ? "running" : "ready";
-  document.getElementById("plantCount").textContent = countPlants();
-  document.getElementById("enemyCount").textContent = state.enemies.length;
-  document.getElementById("bulletCount").textContent = state.bullets.length;
-  document.getElementById("updateValue").textContent = `${state.updateProgress}%`;
+  document.getElementById("coffeeValue").textContent = state.coffee;
+  document.getElementById("levelValue").textContent = state.level;
+  document.getElementById("timeValue").textContent = formatTime(state.elapsed);
+  document.getElementById("filesValue").textContent = `${remainingFiles()}/${state.files.length}`;
+  document.getElementById("hpValue").textContent = Math.ceil(state.player.hp);
+  document.getElementById("handValue").textContent = state.hand.length;
+  document.getElementById("threatValue").textContent = state.enemies.length > 24 ? "panic" : state.enemies.length > 12 ? "busy" : "calm";
+  document.getElementById("bossValue").textContent = state.bossSpawned ? "awake" : `${Math.max(0, Math.ceil(180 - state.elapsed))}s`;
+  document.getElementById("drawCostValue").textContent = `${DRAW_CARD_COST} coffee`;
+  document.getElementById("startBtn").textContent = state.paused ? "继续" : state.running && !state.gameOver ? "运行中" : "开始";
+  document.getElementById("startBtn").disabled = state.running && !state.paused && !state.gameOver;
+  drawCardBtn.disabled = state.hand.length >= MAX_HAND || state.coffee < DRAW_CARD_COST || state.gameOver;
+  document.getElementById("saveCooldown").textContent = cooldownText(state.skillCooldowns.save);
+  document.getElementById("killCooldown").textContent = cooldownText(state.skillCooldowns.kill);
+  document.getElementById("closeCooldown").textContent = cooldownText(state.skillCooldowns.close);
+  document.getElementById("saveSkillBtn").disabled = state.skillCooldowns.save > 0;
+  document.getElementById("killSkillBtn").disabled = state.skillCooldowns.kill > 0;
+  document.getElementById("closeSkillBtn").disabled = state.skillCooldowns.close > 0;
   document.getElementById("safetyStatus").textContent = state.gameOver
     ? "simulation only: real files are safe"
-    : "guarding workspace files";
-
-  document.querySelectorAll(".card").forEach(card => {
-    const key = card.dataset.key;
-    const def = card.dataset.kind === "plant" ? plantDefs[key] : moduleDefs[key];
-    card.classList.toggle("selected", state.selected === key && state.selectedKind === def.type);
-    card.classList.toggle("disabled", !canPay(def));
-  });
-  updateNextWave();
-  renderFileStatus();
+    : "real files are safe";
 }
 
-function renderFileStatus() {
-  fileTree.innerHTML = state.files.map((file, index) => `
-    <div class="file-row ${index === 1 ? "active" : ""} ${file.deleted ? "deleted" : ""}">
-      <span class="file-icon">${file.icon}</span>
-      <span title="${file.path}">${file.path}</span>
-      <span class="file-status">${file.deleted ? "deleted" : "safe"}</span>
-    </div>
-  `).join("");
-
-  protectedList.innerHTML = state.files.map(file => `
-    <div class="protected-item ${file.deleted ? "deleted" : ""}">
-      <span title="${file.path}">${file.path}</span>
-      <strong>${file.deleted ? "lost" : "safe"}</strong>
-    </div>
-  `).join("");
-
-  document.querySelectorAll(".row-label").forEach(label => {
-    const row = Number(label.dataset.row);
-    label.classList.toggle("deleted", Boolean(state.files[row]?.deleted));
-  });
-  document.querySelectorAll(".cell").forEach(cell => {
-    const row = Number(cell.dataset.row);
-    cell.classList.toggle("file-lost", Boolean(state.files[row]?.deleted));
-  });
+function cooldownText(value) {
+  return value > 0 ? `${Math.ceil(value)}s` : "ready";
 }
 
-function selectedName() {
-  if (state.selectedKind === "plant") return plantDefs[state.selected].name;
-  return moduleDefs[state.selected].name;
+function formatTime(seconds) {
+  const total = Math.floor(seconds);
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 }
 
-function countPlants() {
-  let count = 0;
-  for (const row of state.plants) for (const plant of row) if (plant) count += 1;
-  return count;
+function distance(a, b) {
+  return Math.hypot(a.x - b.x, a.y - b.y);
 }
 
-function updateNextWave() {
-  const next = waves[Math.min(state.wave, waves.length - 1)] || [];
-  const counts = next.reduce((acc, item) => {
-    acc[item.kind] = (acc[item.kind] || 0) + 1;
-    return acc;
-  }, {});
-  const box = document.getElementById("nextWave");
-  box.innerHTML = Object.entries(counts).map(([kind, count]) => {
-    const def = enemyDefs[kind];
-    return `
-      <div class="wave-item">
-        <img src="${def.icon}" alt="" />
-        <span>${def.name}</span>
-        <strong>x${count}</strong>
-      </div>
-    `;
-  }).join("") || `<div class="wave-item">无</div>`;
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function shuffle(items) {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
 }
 
 document.getElementById("startBtn").addEventListener("click", startGame);
 document.getElementById("pauseBtn").addEventListener("click", togglePause);
 document.getElementById("resetBtn").addEventListener("click", resetGame);
 document.getElementById("modalResetBtn").addEventListener("click", resetGame);
-document.getElementById("applyFunctionBtn").addEventListener("click", () => applyFunctionExpression(functionInput.value));
-functionInput.addEventListener("keydown", event => {
-  if (event.key === "Enter") applyFunctionExpression(functionInput.value);
+document.getElementById("saveSkillBtn").addEventListener("click", useSaveSkill);
+document.getElementById("killSkillBtn").addEventListener("click", useKillSkill);
+document.getElementById("closeSkillBtn").addEventListener("click", useCloseSkill);
+drawCardBtn.addEventListener("click", buyCard);
+arenaLayer.addEventListener("click", event => {
+  const popup = event.target.closest(".popup-threat");
+  if (!popup) return;
+  state.popups = state.popups.filter(item => item.id !== popup.dataset.popupId);
+  addLog("弹窗被手动关掉，桌面清爽了一点。", "good");
+  renderAll();
 });
 
-createCards();
-createBoard();
+window.addEventListener("keydown", event => {
+  const key = normalizeInputKey(event);
+  if (["arrowleft", "arrowright", "arrowup", "arrowdown", "w", "a", "s", "d", " "].includes(key)) {
+    event.preventDefault();
+  }
+  if (key === " ") {
+    useSaveSkill();
+    return;
+  }
+  if (key === "q") useKillSkill();
+  if (key === "e") useCloseSkill();
+  state.keys.add(key);
+});
+
+window.addEventListener("keyup", event => {
+  state.keys.delete(normalizeInputKey(event));
+});
+
+window.addEventListener("blur", () => {
+  state.keys.clear();
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) state.keys.clear();
+});
+
+window.addEventListener("resize", () => {
+  updateArenaSize();
+  state.player.x = clamp(state.player.x, 28, state.width - 28);
+  state.player.y = clamp(state.player.y, 28, state.height - 28);
+});
+
 resetGame();
 requestAnimationFrame(tick);

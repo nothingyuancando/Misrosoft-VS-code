@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="npm dependency hell enemy">
+  <rect width="96" height="96" rx="18" fill="#2b1717"/>
+  <rect x="14" y="25" width="68" height="34" rx="6" fill="#cb3837"/>
+  <text x="48" y="48" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="20" fill="#fff">npm</text>
+  <path d="M20 70h13l8-8 8 8h10l8-8 9 8" fill="none" stroke="#facc15" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 70l-6 8m30-8 7 8" stroke="#f14c4c" stroke-width="4" stroke-linecap="round"/>
+  <text x="48" y="88" text-anchor="middle" font-family="Consolas,monospace" font-size="11" fill="#fca5a5">DEP HELL</text>
+</svg>

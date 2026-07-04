@@ -20,6 +20,7 @@ build/
 .cache/
 .parcel-cache/
 coverage/
+tmp/
 
 # Python static-server cache
 __pycache__/

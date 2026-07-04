@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Tomcat tool plant">
+  <rect width="96" height="96" rx="18" fill="#1f1f21"/>
+  <path d="M24 35 36 20l5 13h14l5-13 12 15-6 29c-2 10-11 16-18 16S32 74 30 64l-6-29Z" fill="#facc15"/>
+  <path d="M34 48h28" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
+  <path d="M37 57c7 5 15 5 22 0" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+  <path d="M25 42h12m34 0H59" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+  <path d="M19 76h58" stroke="#007acc" stroke-width="6" stroke-linecap="round"/>
+  <text x="48" y="91" text-anchor="middle" font-family="Consolas,monospace" font-size="11" fill="#d4d4d4">8080</text>
+</svg>
