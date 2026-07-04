@@ -492,6 +492,16 @@
       opacity: .55;
     }
 
+    .plant.module-pulse::after {
+      content: "";
+      position: absolute;
+      inset: -3px;
+      border: 2px solid var(--cyan);
+      border-radius: 8px;
+      animation: modulePulse .9s ease-out forwards;
+      pointer-events: none;
+    }
+
     .plant img {
       width: 41px;
       height: 41px;
@@ -663,6 +673,11 @@
       to { opacity: 0; scale: 1.45; }
     }
 
+    @keyframes modulePulse {
+      from { opacity: .95; transform: scale(.82); }
+      to { opacity: 0; transform: scale(1.28); }
+    }
+
     .side {
       grid-column: 4;
       grid-row: 2;
@@ -754,6 +769,46 @@
       color: #cccccc;
       font-size: 12px;
       margin-top: 6px;
+    }
+
+    .formula-form {
+      display: grid;
+      gap: 8px;
+    }
+
+    .formula-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+      color: #cccccc;
+      font-family: Consolas, "Microsoft YaHei", monospace;
+      font-size: 12px;
+    }
+
+    .formula-row input {
+      min-width: 0;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 0 8px;
+      font: inherit;
+    }
+
+    .formula-help {
+      color: #858585;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .formula-current {
+      color: #dcdcaa;
+      font-family: Consolas, "Microsoft YaHei", monospace;
+      font-size: 12px;
+      overflow-wrap: anywhere;
     }
 
     .terminal {
@@ -995,6 +1050,18 @@
         <div class="wave-box">
           <h3>守护文件</h3>
           <div class="protected-list" id="protectedList"></div>
+        </div>
+        <div class="wave-box">
+          <h3>函数炮公式</h3>
+          <div class="formula-form">
+            <label class="formula-row">
+              <span>y =</span>
+              <input id="functionInput" value="sin(x + t) * 0.33" spellcheck="false" />
+            </label>
+            <button id="applyFunctionBtn" class="control-btn">应用函数</button>
+            <div class="formula-current" id="formulaValue">sin(x + t) * 0.33</div>
+            <div class="formula-help">可用 x、t、sin、cos、tan、abs、sqrt、pow、min、max。结果会被限制在安全高度内。</div>
+          </div>
         </div>
         <div class="wave-box">
           <h3>组合缓存</h3>
@@ -1275,7 +1342,10 @@
       updateProgress: 0,
       waveActive: false,
       gameOver: false,
-      files: protectedFiles.map(file => ({ ...file, deleted: false, hits: 0, lastEnemy: "" }))
+      files: protectedFiles.map(file => ({ ...file, deleted: false, hits: 0, lastEnemy: "" })),
+      functionExpression: "sin(x + t) * 0.33",
+      functionLabel: "sin(x + t) * 0.33",
+      functionFn: (x, t) => Math.sin(x + t) * .33
     };
 
     const board = document.getElementById("board");
@@ -1288,6 +1358,8 @@
     const protectedList = document.getElementById("protectedList");
     const incidentModal = document.getElementById("incidentModal");
     const fakeDeleteList = document.getElementById("fakeDeleteList");
+    const functionInput = document.getElementById("functionInput");
+    const formulaValue = document.getElementById("formulaValue");
 
     function cellX(col) {
       return col * (CELL_W + GAP) + CELL_W / 2;
@@ -1400,7 +1472,8 @@
           modules: [],
           lastAction: 0,
           stunnedUntil: 0,
-          guardReady: true
+          guardReady: true,
+          modulePulseUntil: 0
         };
         addLog(`${def.name} 已部署到 ${rowNames[row]} 第 ${col + 1} 列。`, "good");
       } else {
@@ -1421,10 +1494,9 @@
         if (!canPay(def)) return;
         pay(def);
         plant.modules.push(key);
-        addLog(`${plantDefs[plant.key].name} 挂载 ${def.name} 模块。`, "good");
-        if (plant.key === "print" && key === "for") addLog("print + for 组合生效，字符弹开始连发。", "good");
-        if (plant.key === "wall" && key === "else") addLog("if + else 组合生效，墙后藏了一次反击。", "good");
-        if (plant.key === "bug" && key === "rollback") addLog("bug + rollback 组合生效，爆炸会把敌人送回去。", "good");
+        plant.modulePulseUntil = performance.now() + 900;
+        addEffect(row, col, "blast");
+        addLog(`${plantDefs[plant.key].name} 挂载 ${def.name} 模块：${moduleEffectText(plant, key)}`, "good");
       }
       updateUI();
       renderPlants();
@@ -1469,6 +1541,7 @@
       state.waveActive = false;
       state.gameOver = false;
       state.files = protectedFiles.map(file => ({ ...file, deleted: false, hits: 0, lastEnemy: "" }));
+      applyFunctionExpression(functionInput.value, false);
       logEl.innerHTML = "";
       incidentModal.classList.remove("show");
       addLog("VS Code 工作区已重新打开。");
@@ -1552,6 +1625,21 @@
       return plant.modules.includes(key);
     }
 
+    function moduleEffectText(plant, key) {
+      const plantName = plantDefs[plant.key].name;
+      if (plant.key === "print" && key === "for") return "print + for 已生效，下一次攻击会连发 3 颗字符弹。";
+      if (plant.key === "print" && key === "if") return "print + if 已生效，会优先瞄准快怪、精英怪和 Boss。";
+      if (plant.key === "print" && key === "trycatch") return "print + try-catch 已生效，可以抵消一次停火或重启。";
+      if (plant.key === "wall" && key === "else") return "if + else 已生效，墙破时会触发一次备用反击。";
+      if (plant.key === "bug" && key === "rollback") return "bug + rollback 已生效，爆炸会额外击退敌人。";
+      if (plant.key === "rollback" && key === "if") return "rollback + if 已生效，会优先回滚更危险的敌人。";
+      if (key === "for") return `${plantName} 的触发频率提高。`;
+      if (key === "if") return `${plantName} 获得条件判断，目标选择更聪明。`;
+      if (key === "else") return `${plantName} 获得备用分支。`;
+      if (key === "trycatch") return `${plantName} 获得一次异常保险。`;
+      return `${plantName} 的行为已更新。`;
+    }
+
     function handleCoffee(plant, time) {
       const interval = hasModule(plant, "for") ? 5200 : 7600;
       if (time - plant.lastAction < interval) return;
@@ -1613,7 +1701,9 @@
       const push = hasModule(plant, "for") ? 1.9 : 1.25;
       target.col = Math.min(COLS - 0.1, target.col + push);
       target.hp -= 12;
-      addLog(`git rollback 把 ${enemyDefs[target.kind].name} 送回了上一个版本。`, "good");
+      addEffect(plant.row, plant.col, "blast");
+      addLog(`git rollback 把 ${enemyDefs[target.kind].name} 送回了上一个版本，然后清理了自己的临时分支。`, "good");
+      state.plants[plant.row][plant.col] = null;
     }
 
     function handleFunctionCannon(plant, time) {
@@ -1630,11 +1720,60 @@
         yOffset: 0,
         damage: 92,
         speed: 2.2,
-        glyph: "sin",
+        glyph: "f(x)",
         wave: true,
-        born: time
+        born: time,
+        fn: state.functionFn,
+        label: state.functionLabel
       });
-      addLog("函数炮载入 y = sin(x)，炮弹开始蛇形走位。", "good");
+      addLog(`函数炮载入 y = ${state.functionLabel}，炮弹开始按自定义函数移动。`, "good");
+    }
+
+    function applyFunctionExpression(rawExpression, announce = true) {
+      const expression = rawExpression.trim() || "sin(x + t) * 0.33";
+      const compiled = compileFunctionExpression(expression);
+      if (!compiled.ok) {
+        if (announce) addLog(`函数编译失败：${compiled.error}`, "bad");
+        functionInput.value = state.functionExpression;
+        return false;
+      }
+      state.functionExpression = expression;
+      state.functionLabel = expression;
+      state.functionFn = compiled.fn;
+      formulaValue.textContent = expression;
+      functionInput.value = expression;
+      if (announce) addLog(`函数炮公式已更新：y = ${expression}`, "good");
+      return true;
+    }
+
+    function compileFunctionExpression(expression) {
+      const normalized = expression.replace(/\^/g, "**");
+      if (!/^[0-9a-zA-Z_xXtT+\-*/().,\s%*]+$/.test(normalized)) {
+        return { ok: false, error: "只允许数字、x、t、运算符和常用 Math 函数。" };
+      }
+      const identifiers = normalized.match(/[a-zA-Z_]+/g) || [];
+      const allowed = new Set(["x", "t", "sin", "cos", "tan", "abs", "sqrt", "pow", "min", "max", "floor", "ceil", "round", "PI", "E"]);
+      const invalid = identifiers.find(name => !allowed.has(name));
+      if (invalid) return { ok: false, error: `${invalid} 不在允许列表里。` };
+      try {
+        const fn = new Function(
+          "x",
+          "t",
+          `"use strict"; const {sin, cos, tan, abs, sqrt, pow, min, max, floor, ceil, round, PI, E} = Math; return (${normalized});`
+        );
+        const test = fn(1, 1);
+        if (!Number.isFinite(test)) return { ok: false, error: "公式结果不是有效数字。" };
+        return {
+          ok: true,
+          fn: (x, t) => {
+            const value = Number(fn(x, t));
+            if (!Number.isFinite(value)) return 0;
+            return Math.max(-.82, Math.min(.82, value));
+          }
+        };
+      } catch (error) {
+        return { ok: false, error: "公式语法不对。" };
+      }
     }
 
     function rowWithMostEnemies() {
@@ -1784,7 +1923,7 @@
         bullet.x += bullet.speed * dt;
         if (bullet.wave) {
           const age = (time - bullet.born) / 1000;
-          bullet.yOffset = Math.sin(age * 8 + bullet.x * 1.2) * .33;
+          bullet.yOffset = bullet.fn ? bullet.fn(bullet.x, age * 4) : Math.sin(age * 8 + bullet.x * 1.2) * .33;
         }
         const hit = state.enemies.find(enemy =>
           enemy.row === bullet.row &&
@@ -1887,7 +2026,8 @@
         if (!plant) return;
         const def = plantDefs[plant.key];
         const plantEl = document.createElement("div");
-        plantEl.className = `plant ${plant.stunnedUntil > performance.now() ? "stunned" : ""}`;
+        const now = performance.now();
+        plantEl.className = `plant ${plant.stunnedUntil > now ? "stunned" : ""} ${plant.modulePulseUntil > now ? "module-pulse" : ""}`;
         const modules = plant.modules.map(module => {
           const mod = moduleDefs[module];
           return `<span class="module-badge ${module}">${mod.mark}</span>`;
@@ -2021,6 +2161,10 @@
     document.getElementById("pauseBtn").addEventListener("click", togglePause);
     document.getElementById("resetBtn").addEventListener("click", resetGame);
     document.getElementById("modalResetBtn").addEventListener("click", resetGame);
+    document.getElementById("applyFunctionBtn").addEventListener("click", () => applyFunctionExpression(functionInput.value));
+    functionInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") applyFunctionExpression(functionInput.value);
+    });
 
     createCards();
     createBoard();
